@@ -11,7 +11,8 @@ class ValidateTextureHasWorkfile(pyblish.api.InstancePlugin):
     label = "Validate Texture Has Workfile"
     hosts = ["standalonepublisher"]
     order = openpype.api.ValidateContentsOrder
-    families = ["textures"]
+    # families = ["textures"]
+    families = []
     optional = True
 
     def process(self, instance):

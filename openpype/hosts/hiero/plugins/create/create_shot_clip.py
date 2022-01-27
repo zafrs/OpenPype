@@ -12,7 +12,7 @@ class CreateShotClip(phiero.Creator):
     label = "Create Publishable Clip"
     family = "clip"
     icon = "film"
-    defaults = ["Main"]
+    defaults = ["main"]
 
     gui_tracks = [track.name()
                   for track in phiero.get_current_sequence().videoTracks()]

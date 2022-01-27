@@ -96,8 +96,11 @@ class CreateWriteRender(plugin.OpenPypeCreator):
             )
         else:
             self.log.info("Adding template path from plugin")
+            # write_data.update({
+            #     "fpath_template": ("{work}/renders/nuke/{subset}"
+            #                        "/{subset}.{frame}.{ext}")})
             write_data.update({
-                "fpath_template": ("{work}/renders/nuke/{subset}"
+                "fpath_template": ("{work}/render/{subset}"
                                    "/{subset}.{frame}.{ext}")})
 
         # add reformat node to cut off all outside of format bounding box

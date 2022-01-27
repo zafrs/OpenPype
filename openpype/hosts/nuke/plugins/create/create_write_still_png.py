@@ -6,18 +6,27 @@ from openpype.hosts.nuke.api import plugin
 from openpype.hosts.nuke.api.lib import create_write_node
 
 
-class CreateWritePrerender(plugin.OpenPypeCreator):
+class CreateWriteStillPNG(plugin.OpenPypeCreator):
     # change this to template preset
-    name = "WritePrerender"
-    label = "Create Write Prerender"
+    name = "WriteStillFrame"
+    label = "Create Write Still Image"
     hosts = ["nuke"]
     n_class = "Write"
-    family = "prerender"
-    icon = "sign-out"
-    defaults = ["Key01", "Bg01", "Fg01", "Branch01", "Part01"]
+    family = "still"
+    icon = "image"
+    defaults = [
+        "imageFrame{:0>4}".format(nuke.frame()),
+        "MPFrame{:0>4}".format(nuke.frame()),
+        "layoutFrame{:0>4}".format(nuke.frame()),
+        "lightingFrame{:0>4}".format(nuke.frame()),
+        "mattePaintFrame{:0>4}".format(nuke.frame()),
+        "fxFrame{:0>4}".format(nuke.frame()),
+        "compositingFrame{:0>4}".format(nuke.frame()),
+        "animationFrame{:0>4}".format(nuke.frame())
+    ]
 
     def __init__(self, *args, **kwargs):
-        super(CreateWritePrerender, self).__init__(*args, **kwargs)
+        super(CreateWriteStillPNG, self).__init__(*args, **kwargs)
 
         data = OrderedDict()
 
@@ -33,6 +42,7 @@ class CreateWritePrerender(plugin.OpenPypeCreator):
         self.log.debug("_ self.data: '{}'".format(self.data))
 
     def process(self):
+
         inputs = []
         outputs = []
         instance = nuke.toNode(self.data["subset"])
@@ -43,11 +53,12 @@ class CreateWritePrerender(plugin.OpenPypeCreator):
             nodes = self.nodes
 
             if not (len(nodes) < 2):
-                msg = ("Select only one node. The node "
-                       "you want to connect to, "
+                msg = ("Select only one node. "
+                       "The node you want to connect to, "
                        "or tick off `Use selection`")
                 self.log.error(msg)
                 nuke.message(msg)
+                return
 
             if len(nodes) == 0:
                 msg = (
@@ -56,6 +67,7 @@ class CreateWritePrerender(plugin.OpenPypeCreator):
                 )
                 self.log.error(msg)
                 nuke.message(msg)
+                return
 
             selected_node = nodes[0]
             inputs = [selected_node]
@@ -86,29 +98,31 @@ class CreateWritePrerender(plugin.OpenPypeCreator):
         self.data.update(creator_data)
         write_data.update(creator_data)
 
-        if self.presets.get('fpath_template'):
-            self.log.info("Adding template path from preset")
-            write_data.update(
-                {"fpath_template": self.presets["fpath_template"]}
-            )
-        else:
-            self.log.info("Adding template path from plugin")
-            # write_data.update({
-            #     "fpath_template": ("{work}/prerenders/nuke/{subset}"
-            #                        "/{subset}.{frame}.{ext}")})
-            write_data.update({
-                "fpath_template": ("{work}/prerender/{subset}"
-                                   "/{subset}.{frame}.{ext}")})
+        self.log.info("Adding template path from plugin")
+        write_data.update({
+            # "fpath_template": (
+            #     "{work}/renders/nuke/{subset}/{subset}.{ext}")})
+            "fpath_template": (
+                "{work}/render/{subset}/{subset}.{ext}")})
 
-
-        self.log.info("write_data: {}".format(write_data))
+        _prenodes = [
+            {
+                "name": "FrameHold01",
+                "class": "FrameHold",
+                "knobs": [
+                    ("first_frame", nuke.frame())
+                ],
+                "dependent": None
+            }
+        ]
 
         write_node = create_write_node(
-            self.data["subset"],
+            self.name,
             write_data,
             input=selected_node,
-            prenodes=[],
             review=False,
+            prenodes=_prenodes,
+            farm=False,
             linked_knobs=["channels", "___", "first", "last", "use_limit"])
 
         # relinking to collected connections
@@ -120,7 +134,7 @@ class CreateWritePrerender(plugin.OpenPypeCreator):
         for output in outputs:
             output.setInput(0, write_node)
 
-        # open group node
+        # link frame hold to group node
         write_node.begin()
         for n in nuke.allNodes():
             # get write node
@@ -128,9 +142,8 @@ class CreateWritePrerender(plugin.OpenPypeCreator):
                 w_node = n
         write_node.end()
 
-        if self.presets.get("use_range_limit"):
-            w_node["use_limit"].setValue(True)
-            w_node["first"].setValue(nuke.root()["first_frame"].value())
-            w_node["last"].setValue(nuke.root()["last_frame"].value())
+        w_node["use_limit"].setValue(True)
+        w_node["first"].setValue(nuke.frame())
+        w_node["last"].setValue(nuke.frame())
 
         return write_node

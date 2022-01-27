@@ -24,7 +24,7 @@ class CollectWorkfile(pyblish.api.ContextPlugin):
         data = {}
 
         # create instance
-        instance = context.create_instance(name=filename)
+        # instance = context.create_instance(name=filename)
         subset = 'workfile' + task.capitalize()
 
         data.update({
@@ -48,7 +48,7 @@ class CollectWorkfile(pyblish.api.ContextPlugin):
             "stagingDir": folder,
         }]
 
-        instance.data.update(data)
+        # instance.data.update(data)
 
         self.log.info('Collected instance: {}'.format(file))
         self.log.info('Scene path: {}'.format(current_file))

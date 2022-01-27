@@ -16,7 +16,7 @@ class IntegrateThumbnails(pyblish.api.InstancePlugin):
 
     label = "Integrate Thumbnails"
     order = pyblish.api.IntegratorOrder + 0.01
-    families = ["review"]
+    families = ["review", "plate"]
 
     required_context_keys = [
         "project", "asset", "task", "subset", "version"

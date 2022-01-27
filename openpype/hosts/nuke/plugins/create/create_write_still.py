@@ -15,9 +15,14 @@ class CreateWriteStill(plugin.OpenPypeCreator):
     family = "still"
     icon = "image"
     defaults = [
-        "ImageFrame{:0>4}".format(nuke.frame()),
+        "imageFrame{:0>4}".format(nuke.frame()),
         "MPFrame{:0>4}".format(nuke.frame()),
-        "LayoutFrame{:0>4}".format(nuke.frame())
+        "layoutFrame{:0>4}".format(nuke.frame()),
+        "lightingFrame{:0>4}".format(nuke.frame()),
+        "mattePaintFrame{:0>4}".format(nuke.frame()),
+        "fxFrame{:0>4}".format(nuke.frame()),
+        "compositingFrame{:0>4}".format(nuke.frame()),
+        "animationFrame{:0>4}".format(nuke.frame())
     ]
 
     def __init__(self, *args, **kwargs):
@@ -95,8 +100,10 @@ class CreateWriteStill(plugin.OpenPypeCreator):
 
         self.log.info("Adding template path from plugin")
         write_data.update({
+            # "fpath_template": (
+            #     "{work}/renders/nuke/{subset}/{subset}.{ext}")})
             "fpath_template": (
-                "{work}/renders/nuke/{subset}/{subset}.{ext}")})
+                "{work}/render/{subset}/{subset}.{ext}")})
 
         _prenodes = [
             {

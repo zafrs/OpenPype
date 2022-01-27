@@ -182,7 +182,9 @@ class PrecollectInstances(pyblish.api.ContextPlugin):
             return
 
         asset = data["asset"]
-        subset = "shotMain"
+        # subset = "shotMain"
+        subset = "shot_main"
+
 
         # insert family into families
         family = "shot"
@@ -223,7 +225,9 @@ class PrecollectInstances(pyblish.api.ContextPlugin):
             return
 
         asset = data["asset"]
-        subset = "audioMain"
+        # subset = "audioMain"
+        subset = "audio_main"
+
 
         # insert family into families
         family = "audio"

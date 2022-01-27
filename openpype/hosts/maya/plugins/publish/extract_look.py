@@ -62,7 +62,7 @@ def maketx(source, destination, *args):
     """
     from openpype.lib import get_oiio_tools_path
 
-    maketx_path = get_oiio_tools_path("maketx")
+    maketx_path = get_oiio_tools_path("maketx.exe")
     if not os.path.exists(maketx_path):
         print(
             "OIIO tool not found in {}".format(maketx_path))
