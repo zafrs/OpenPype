@@ -77,7 +77,8 @@ class CollectReview(pyblish.api.InstancePlugin):
                 self.log.debug('isntance data {}'.format(instance.data))
         else:
             if self.legacy:
-                instance.data['subset'] = task + 'Review'
+                # instance.data['subset'] = task + 'Review'
+                instance.data['subset'] =  'review' + '_' + task
             else:
                 subset = "{}{}{}".format(
                     task,

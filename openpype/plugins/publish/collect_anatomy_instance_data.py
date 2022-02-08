@@ -237,7 +237,6 @@ class CollectAnatomyInstanceData(pyblish.api.ContextPlugin):
                 "subset": instance.data["subset"],
                 "version": version_number
             }
-
             # Hiearchy
             asset_doc = instance.data.get("assetEntity")
             if asset_doc and asset_doc["_id"] != context_asset_doc["_id"]:

@@ -22,8 +22,8 @@ a.setShortcut(QKeySequence('Shift+R'))
 a = hiero.ui.findMenuAction("Import EDL/XML/AAF...")
 a.setShortcut(QKeySequence('Ctrl+Shift+O'))
 #----------------------------------------------
-a = hiero.ui.findMenuAction("Metadata View")
-a.setShortcut(QKeySequence("I"))
+# a = hiero.ui.findMenuAction("Metadata View")
+# a.setShortcut(QKeySequence(""))
 #----------------------------------------------
 a = hiero.ui.findMenuAction("Edit Settings")
 a.setShortcut(QKeySequence("S"))
