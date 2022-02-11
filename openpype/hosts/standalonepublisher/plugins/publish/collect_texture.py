@@ -160,17 +160,17 @@ class CollectTextures(pyblish.api.ContextPlugin):
                         self.color_space
                     )
 
-                    # shader = self._get_shader_name(
-                    #     repre_file,
-                    #     self.input_naming_patterns["textures"],
-                    #     self.input_naming_groups["textures"],
-                    #     self.color_space
-                    # )
+                    shader = self._get_shader_name(
+                        repre_file,
+                        self.input_naming_patterns["textures"],
+                        self.input_naming_groups["textures"],
+                        self.color_space
+                    )
 
                     formatting_data = {
                         "color_space": c_space or '',  # None throws exception
                         "channel": channel or '',
-                        # "shader": shader or '',
+                        "shader": shader or '',
                         "subset": parsed_subset or ''
                     }
 
@@ -197,7 +197,7 @@ class CollectTextures(pyblish.api.ContextPlugin):
                     ver_data = {
                         "color_space": c_space or '',
                         "channel_name": channel or '',
-                        # "shader_name": shader or ''
+                        "shader_name": shader or ''
                     }
                     version_data[subset] = ver_data
 

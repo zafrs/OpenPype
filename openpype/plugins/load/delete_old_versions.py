@@ -408,9 +408,6 @@ class DeleteOldVersions(api.SubsetLoader):
 
     def load(self, contexts, name=None, namespace=None, options=None):
         try:
-            # if os.environ["OPENPYPE_LOCAL_ID"] == "dev" :
-            #     self.message( "Tracked, please dont delete the asset")
-            # else :
             size = 0
             for count, context in enumerate(contexts):
                 versions_to_keep = 2

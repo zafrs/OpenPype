@@ -23,9 +23,7 @@ class IntegrateHeroVersion(pyblish.api.InstancePlugin):
         "setdress",
         "look",
         "pointcache",
-        "animation",
-        "texture_batch",
-        "textures"
+        "animation"
     ]
 
     # Can specify representation names that will be ignored (lower case)

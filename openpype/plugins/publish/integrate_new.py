@@ -101,9 +101,7 @@ class IntegrateAssetNew(pyblish.api.InstancePlugin):
                 "effect",
                 "xgen",
                 "hda",
-                "reference",
-                "texture_batch",
-                "render_mov_batch"
+                "reference"
                 ]
     exclude_families = ["clip"]
     db_representation_context_keys = [
