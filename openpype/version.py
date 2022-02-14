@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 """Package declaring Pype version."""
-__version__ = "3.9.0-Lumine220211-2"
+__version__ = "3.9.0-Lumine220214-1"
 
-# 12 jan 2022
+# 14 feb 2022 
+# merge with develop at c64f8be0143d4d50ccb7eb9c94545704836db391
+
+# 12 feb 2022
 # create Version "3.8.3-Lumine220211-1" at cde3ef1cb28ba3df41794dac8f2ee13739167422
 
 # clean up https://github.com/zafrs/OpenPype/tree/openpype-lumine at cde3ef1cb28ba3df41794dac8f2ee13739167422
