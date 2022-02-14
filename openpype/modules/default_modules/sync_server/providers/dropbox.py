@@ -104,8 +104,10 @@ class DropboxHandler(AbstractProvider):
                     "type": "path",
                     "multiplatform": False,
                     "multipath": False
-                }import os
-
+                }
+            }
+        ]
+import os
 import dropbox
 
 from openpype.api import Logger
@@ -540,8 +542,6 @@ class DropboxHandler(AbstractProvider):
                 raise ValueError(msg)
 
         return path
-            }
-        ]
 
     @classmethod
     def get_local_settings_schema(cls):
