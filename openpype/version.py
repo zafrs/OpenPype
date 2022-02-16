@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 """Package declaring Pype version."""
-__version__ = "3.9.0-Lumine220214-2"
+__version__ = "3.9.0-Lumine220216-1"
 
 # 14 feb 2022 
 # add and create version 3.9.0-Lumine220214-1 https://github.com/zafrs/OpenPype/tree/openpype-lumine at 5e1da0e3ff7028011d4554a3e5f3fe15865c49d5
+# add feature dropbox at 97c8e17fafd680ed07a8c2cd37fe660ab98d3e4d
 # merge with develop at c64f8be0143d4d50ccb7eb9c94545704836db391
 
 # 12 feb 2022
