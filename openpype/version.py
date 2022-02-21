@@ -2,7 +2,10 @@
 """Package declaring Pype version."""
 __version__ = "3.9.0-Lumine220221-1"
 
-# 16 Feb 
+# 21 feb 2022
+# create versopm 3.9.0-Lumine220221-1 2b49368cec0c92614e0d4efa319daa3611e9aacc
+
+# 16 Feb 2022
 # merge main to openpype-lumine at 20228bab9b5b0424f675d291bd25d8c4176ede7db160
 
 # 14 feb 2022 
