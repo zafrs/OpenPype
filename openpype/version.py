@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """Package declaring Pype version."""
-__version__ = "3.9.0-Lumine220221-1"
+__version__ = "3.9.0-Lumine220221-2"
 
 # 21 feb 2022
 # merge with main and create 3.9.0-Lumine220221-1 2b49368cec0c92614e0d4efa319daa3611e9aacc
