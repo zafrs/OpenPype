@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
 """Package declaring Pype version."""
-__version__ = "3.9.0-Lumine220221-2"
+__version__ = "3.9.0-Lumine220224-1"
+
+# 24 feb 2022
+# add https://github.com/zafrs/OpenPype/tree/Lumine-version/3.9.0-Lumine220221-1 at 294485e6464395b40c46375fa46c51fa64405770
 
 # 21 feb 2022
 # merge with main and create 3.9.0-Lumine220221-1 2b49368cec0c92614e0d4efa319daa3611e9aacc
 
-# 16 Feb 2022
+# 16 Feb 
 # merge main to openpype-lumine at 20228bab9b5b0424f675d291bd25d8c4176ede7db160
 
 # 14 feb 2022 
@@ -15,9 +18,7 @@ __version__ = "3.9.0-Lumine220221-2"
 
 # 12 feb 2022
 # create Version "3.8.3-Lumine220211-1" at cde3ef1cb28ba3df41794dac8f2ee13739167422
-
 # clean up https://github.com/zafrs/OpenPype/tree/openpype-lumine at cde3ef1cb28ba3df41794dac8f2ee13739167422
-
 # merge with develop https://github.com/zafrs/OpenPype/tree/openpype-lumine at 0ad72b000c92d5f47e19cdf6bbce7ca6bd110236
 
 # 9 Feb 2022
@@ -26,7 +27,6 @@ __version__ = "3.9.0-Lumine220221-2"
 # 8 Feb 2022
 # added https://github.com/pypeclub/OpenPype/pull/2630 with dependencies (avalon-core)
 # added https://github.com/zafrs/OpenPype/tree/openpype-lumine at 7253d396928a1a07c385e5f44c89b5e117e2aeec
-
 # update https://github.com/zafrs/OpenPype/tree/openpype-lumine at 72f893022abf5f1d3d3b6fddef33de14e810dbce
 
 # 1 Jan 2022
