@@ -3,7 +3,7 @@
 __version__ = "3.9.0-Lumine220224-1"
 
 # 24 feb 2022
-# add https://github.com/zafrs/OpenPype/tree/Lumine-version/3.9.0-Lumine220221-1 at 294485e6464395b40c46375fa46c51fa64405770
+# add https://github.com/zafrs/OpenPype/tree/Lumine-version/3.9.0-Lumine220221-1 at 1c0d01bce29977c2852ca3a94c71645010bd8b99
 
 # 21 feb 2022
 # merge with main and create 3.9.0-Lumine220221-1 2b49368cec0c92614e0d4efa319daa3611e9aacc
