@@ -20,7 +20,7 @@ class DropDataFrame(QtWidgets.QFrame):
         ".pictor", ".png", ".psb", ".psp", ".qtvr", ".ras",
         ".rgbe", ".logluv", ".tiff", ".sgi", ".tga", ".tiff", ".tiff/ep",
         ".tiff/it", ".ufo", ".ufp", ".wbmp", ".webp", ".xbm", ".xcf",
-        ".xpm", ".xwd"
+        ".xpm", ".xwd", ".arw", ".ARW", ".JPG"
     ]
     video_extensions = [
         ".3g2", ".3gp", ".amv", ".asf", ".avi", ".drc", ".f4a", ".f4b",
