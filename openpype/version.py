@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 """Package declaring Pype version."""
-__version__ = "3.9.0-Lumine220301-1"
+__version__ = "3.9.0-Lumine220301-2"
 
 # 01 mar 2022
 # added https://github.com/zafrs/OpenPype/tree/openpype-lumine at 98234d9821ca47c9e16a436a5ceaeb4eb21aa064
+# added PR ( cherry pick ) https://github.com/pypeclub/OpenPype/pull/2822/files at 863753705680abde97b6f0795521dd8cdfa527ba 
 
 # 24 feb 2022
 # added https://github.com/zafrs/OpenPype/tree/Lumine-version/3.9.0-Lumine220221-1 at 1c0d01bce29977c2852ca3a94c71645010bd8b99
