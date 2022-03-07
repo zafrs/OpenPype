@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
 """Package declaring Pype version."""
-__version__ = "3.9.0-Lumine220301-1"
+__version__ = "3.9.0-Lumine220301-2"
+
+# 01 mar 2022
+# added https://github.com/zafrs/OpenPype/tree/openpype-lumine at 98234d9821ca47c9e16a436a5ceaeb4eb21aa064
+# added PR ( cherry pick ) https://github.com/pypeclub/OpenPype/pull/2822/files at 863753705680abde97b6f0795521dd8cdfa527ba 
 
 # 24 feb 2022
-# add https://github.com/zafrs/OpenPype/tree/Lumine-version/3.9.0-Lumine220221-1 at 1c0d01bce29977c2852ca3a94c71645010bd8b99
+# added https://github.com/zafrs/OpenPype/tree/Lumine-version/3.9.0-Lumine220221-1 at 1c0d01bce29977c2852ca3a94c71645010bd8b99
 
 # 21 feb 2022
 # merge with main and create 3.9.0-Lumine220221-1 2b49368cec0c92614e0d4efa319daa3611e9aacc
@@ -12,8 +16,8 @@ __version__ = "3.9.0-Lumine220301-1"
 # merge main to openpype-lumine at 20228bab9b5b0424f675d291bd25d8c4176ede7db160
 
 # 14 feb 2022 
-# add and create version 3.9.0-Lumine220214-1 https://github.com/zafrs/OpenPype/tree/openpype-lumine at 5e1da0e3ff7028011d4554a3e5f3fe15865c49d5
-# add feature dropbox at 97c8e17fafd680ed07a8c2cd37fe660ab98d3e4d
+# added and create version 3.9.0-Lumine220214-1 https://github.com/zafrs/OpenPype/tree/openpype-lumine at 5e1da0e3ff7028011d4554a3e5f3fe15865c49d5
+# added feature dropbox at 97c8e17fafd680ed07a8c2cd37fe660ab98d3e4d
 # merge with develop at c64f8be0143d4d50ccb7eb9c94545704836db391
 
 # 12 feb 2022
