@@ -1,5 +1,7 @@
 import pyblish.api
+
 import openpype.api
+from openpype.pipeline import PublishXmlValidationError
 
 
 class ValidateTextureHasWorkfile(pyblish.api.InstancePlugin):
@@ -18,4 +20,6 @@ class ValidateTextureHasWorkfile(pyblish.api.InstancePlugin):
     def process(self, instance):
         wfile = instance.data["versionData"].get("workfile")
 
-        assert wfile, "Textures are missing attached workfile"
+        msg = "Textures are missing attached workfile"
+        if not wfile:
+            raise PublishXmlValidationError(self, msg)
