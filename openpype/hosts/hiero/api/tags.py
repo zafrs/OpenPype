@@ -30,6 +30,26 @@ def tag_data():
 
                 }
             }
+        },        
+        "[Projects]": {
+            "shotVFX": {
+                "editable": "1",
+                "note": "Tag for VFX Shot",  # noqa
+                "icon": "hiero_VFX.png",
+                "metadata": {
+                    "shotType": "VFX"
+
+                }
+            },
+            "shotCGI": {
+                "editable": "1",
+                "note": "Tag for CGI Shot",  # noqa
+                "icon": "hiero_CGI.png",
+                "metadata": {
+                    "shotType": "CGI"
+
+                }
+            }
         },
         # "NukeScript": {
         #     "editable": "1",
