@@ -386,9 +386,6 @@ def sync_avalon_data_to_workfile():
     anatomy = Anatomy(project_name)
     work_template = anatomy.templates["work"]["path"]
     work_root = anatomy.root_value_for_template(work_template)
-    active_project_root = (
-        os.path.join(work_root, project_name)
-    ).replace("\\", "/")
     # getting project
     project = get_current_project()
 
@@ -398,16 +395,21 @@ def sync_avalon_data_to_workfile():
     log.debug("Synchronizing Pype metadata to project: {}".format(
         project.name()))
 
+    # get project data from avalon db
+    project_doc = avalon.io.find_one({"type": "project"})
+    project_data = project_doc["data"]
+    project_code = project_doc["data"].get("code")
+
+    active_project_root = (
+        os.path.join(work_root, project_code)
+    ).replace("\\", "/")
+
     # set project root with backward compatibility
     try:
         project.setProjectDirectory(active_project_root)
     except Exception:
         # old way of setting it
         project.setProjectRoot(active_project_root)
-
-    # get project data from avalon db
-    project_doc = avalon.io.find_one({"type": "project"})
-    project_data = project_doc["data"]
 
     log.debug("project_data: {}".format(project_data))
 
