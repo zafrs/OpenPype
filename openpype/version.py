@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """Package declaring Pype version."""
-__version__ = "3.9.2-Lumine220322-1"
+__version__ = "3.9.2-Lumine220323-2"
 
 # 22 mar 2002
 # commit 0e22a6d9a937373204e661dc27b107312795a4bc
