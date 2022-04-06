@@ -106,7 +106,8 @@ class IntegrateAssetNew(pyblish.api.InstancePlugin):
                 "xgen",
                 "hda",
                 "usd",
-                "reference"
+                "reference",
+                "material"
                 ]
     exclude_families = ["clip"]
     db_representation_context_keys = [
