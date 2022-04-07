@@ -108,6 +108,12 @@ class IntegrateAssetNew(pyblish.api.InstancePlugin):
                 "usd",
                 "reference",
                 "material"
+                "usd",
+                "staticMesh",
+                "skeletalMesh",
+                "usdComposition",
+                "usdOverride",
+                "simpleUnrealTexture"
                 ]
     exclude_families = ["clip"]
     db_representation_context_keys = [
@@ -355,6 +361,8 @@ class IntegrateAssetNew(pyblish.api.InstancePlugin):
         if profile:
             template_name = profile["template_name"]
 
+
+
         published_representations = {}
         for idx, repre in enumerate(instance.data["representations"]):
             # reset transfers for next representation
@@ -382,6 +390,11 @@ class IntegrateAssetNew(pyblish.api.InstancePlugin):
                 template_data["resolution_height"] = resolution_height
             if resolution_width:
                 template_data["fps"] = fps
+
+            if "originalBasename" in instance.data:
+                template_data.update({
+                    "originalBasename": instance.data.get("originalBasename")
+                })
 
             files = repre['files']
             if repre.get('stagingDir'):
@@ -554,6 +567,12 @@ class IntegrateAssetNew(pyblish.api.InstancePlugin):
                 repre['published_path'] = dst
                 self.log.debug("__ dst: {}".format(dst))
 
+            if not instance.data.get("publishDir"):
+                instance.data["publishDir"] = (
+                    anatomy_filled
+                    [template_name]
+                    ["folder"]
+                )
             if repre.get("udim"):
                 repre_context["udim"] = repre.get("udim")  # store list
 
@@ -1100,17 +1119,16 @@ class IntegrateAssetNew(pyblish.api.InstancePlugin):
                     rec["sites"].append(meta)
                     already_attached_sites[meta["name"]] = None
 
+                # add alternative sites
+                rec, already_attached_sites = self._add_alternative_sites(
+                    system_sync_server_presets, already_attached_sites, rec)
+
                 # add skeleton for site where it should be always synced to
-                for always_on_site in always_accesible:
+                for always_on_site in set(always_accesible):
                     if always_on_site not in already_attached_sites.keys():
                         meta = {"name": always_on_site.strip()}
                         rec["sites"].append(meta)
                         already_attached_sites[meta["name"]] = None
-
-                # add alternative sites
-                rec = self._add_alternative_sites(system_sync_server_presets,
-                                                  already_attached_sites,
-                                                  rec)
 
             log.debug("final sites:: {}".format(rec["sites"]))
 
@@ -1142,22 +1160,65 @@ class IntegrateAssetNew(pyblish.api.InstancePlugin):
         """
         conf_sites = system_sync_server_presets.get("sites", {})
 
+        alt_site_pairs = self._get_alt_site_pairs(conf_sites)
+
+        already_attached_keys = list(already_attached_sites.keys())
+        for added_site in already_attached_keys:
+            real_created = already_attached_sites[added_site]
+            for alt_site in alt_site_pairs.get(added_site, []):
+                if alt_site in already_attached_sites.keys():
+                    continue
+                meta = {"name": alt_site}
+                # alt site inherits state of 'created_dt'
+                if real_created:
+                    meta["created_dt"] = real_created
+                rec["sites"].append(meta)
+                already_attached_sites[meta["name"]] = real_created
+
+        return rec, already_attached_sites
+
+    def _get_alt_site_pairs(self, conf_sites):
+        """Returns dict of site and its alternative sites.
+
+        If `site` has alternative site, it means that alt_site has 'site' as
+        alternative site
+        Args:
+            conf_sites (dict)
+        Returns:
+            (dict): {'site': [alternative sites]...}
+        """
+        alt_site_pairs = {}
         for site_name, site_info in conf_sites.items():
             alt_sites = set(site_info.get("alternative_sites", []))
-            already_attached_keys = list(already_attached_sites.keys())
-            for added_site in already_attached_keys:
-                if added_site in alt_sites:
-                    if site_name in already_attached_keys:
-                        continue
-                    meta = {"name": site_name}
-                    real_created = already_attached_sites[added_site]
-                    # alt site inherits state of 'created_dt'
-                    if real_created:
-                        meta["created_dt"] = real_created
-                    rec["sites"].append(meta)
-                    already_attached_sites[meta["name"]] = real_created
+            if not alt_site_pairs.get(site_name):
+                alt_site_pairs[site_name] = []
 
-        return rec
+            alt_site_pairs[site_name].extend(alt_sites)
+
+            for alt_site in alt_sites:
+                if not alt_site_pairs.get(alt_site):
+                    alt_site_pairs[alt_site] = []
+                alt_site_pairs[alt_site].extend([site_name])
+
+        # transitive relationship, eg site is alternative to another which is
+        # alternative to nex site
+        loop = True
+        while loop:
+            loop = False
+            for site_name, alt_sites in alt_site_pairs.items():
+                for alt_site in alt_sites:
+                    # safety against wrong config
+                    # {"SFTP": {"alternative_site": "SFTP"}
+                    if alt_site == site_name:
+                        continue
+
+                    for alt_alt_site in alt_site_pairs.get(alt_site, []):
+                        if (    alt_alt_site != site_name
+                                and alt_alt_site not in alt_sites):
+                            alt_site_pairs[site_name].append(alt_alt_site)
+                            loop = True
+
+        return alt_site_pairs
 
     def handle_destination_files(self, integrated_file_sizes, mode):
         """ Clean destination files
