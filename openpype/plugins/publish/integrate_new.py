@@ -8,6 +8,7 @@ import errno
 import six
 import re
 import shutil
+from collections import deque, defaultdict
 
 from bson.objectid import ObjectId
 from pymongo import DeleteOne, InsertOne
@@ -1187,36 +1188,31 @@ class IntegrateAssetNew(pyblish.api.InstancePlugin):
         Returns:
             (dict): {'site': [alternative sites]...}
         """
-        alt_site_pairs = {}
+        alt_site_pairs = defaultdict(list)
         for site_name, site_info in conf_sites.items():
             alt_sites = set(site_info.get("alternative_sites", []))
-            if not alt_site_pairs.get(site_name):
-                alt_site_pairs[site_name] = []
-
             alt_site_pairs[site_name].extend(alt_sites)
 
             for alt_site in alt_sites:
-                if not alt_site_pairs.get(alt_site):
-                    alt_site_pairs[alt_site] = []
-                alt_site_pairs[alt_site].extend([site_name])
+                alt_site_pairs[alt_site].append(site_name)
 
-        # transitive relationship, eg site is alternative to another which is
-        # alternative to nex site
-        loop = True
-        while loop:
-            loop = False
-            for site_name, alt_sites in alt_site_pairs.items():
-                for alt_site in alt_sites:
-                    # safety against wrong config
-                    # {"SFTP": {"alternative_site": "SFTP"}
-                    if alt_site == site_name:
-                        continue
+        for site_name, alt_sites in alt_site_pairs.items():
+            sites_queue = deque(alt_sites)
+            while sites_queue:
+                alt_site = sites_queue.popleft()
 
-                    for alt_alt_site in alt_site_pairs.get(alt_site, []):
-                        if (    alt_alt_site != site_name
-                                and alt_alt_site not in alt_sites):
-                            alt_site_pairs[site_name].append(alt_alt_site)
-                            loop = True
+                # safety against wrong config
+                # {"SFTP": {"alternative_site": "SFTP"}
+                if alt_site == site_name or alt_site not in alt_site_pairs:
+                    continue
+
+                for alt_alt_site in alt_site_pairs[alt_site]:
+                    if (
+                            alt_alt_site != site_name
+                            and alt_alt_site not in alt_sites
+                    ):
+                        alt_sites.append(alt_alt_site)
+                        sites_queue.append(alt_alt_site)
 
         return alt_site_pairs
 
