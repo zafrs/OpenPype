@@ -107,7 +107,7 @@ class IntegrateAssetNew(pyblish.api.InstancePlugin):
                 "hda",
                 "usd",
                 "reference",
-                "material"
+                "material",
                 "usd",
                 "staticMesh",
                 "skeletalMesh",
