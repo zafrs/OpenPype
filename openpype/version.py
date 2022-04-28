@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """Package declaring Pype version."""
-__version__ = "3.9.3-Lumine220407-2"
+__version__ = "3.9.5-Lumine220428"
 
 # 07 april 2022
 # added https://github.com/pypeclub/OpenPype/pull/3018 into openpype-lumine at 503903b42a3f7960ddc0a15180403ad7dd61ef6c
