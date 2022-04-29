@@ -70,7 +70,7 @@ class PrecollectWorkfile(pyblish.api.ContextPlugin):
         }
 
         # create instance with workfile
-        # instance = context.create_instance(**instance_data)
+        instance = context.create_instance(**instance_data)
 
         # update context with main project attributes
         context_data = {
@@ -82,8 +82,8 @@ class PrecollectWorkfile(pyblish.api.ContextPlugin):
         }
         context.data.update(context_data)
 
-        # self.log.info("Creating instance: {}".format(instance))
-        # self.log.debug("__ instance.data: {}".format(pformat(instance.data)))
+        self.log.info("Creating instance: {}".format(instance))
+        self.log.debug("__ instance.data: {}".format(pformat(instance.data)))
         self.log.debug("__ context_data: {}".format(pformat(context_data)))
 
     def get_colorspace(self, project):
