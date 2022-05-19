@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """Package declaring Pype version."""
-__version__ = "3.9.5-Lumine220429+staging"
+__version__ = "3.9.6-Lumine220519+staging"
+
+# 19 may 2022
+# merge with Lumine-version/3.9.1-Lumine220406 at 373295446f86e56dc0f08a8af460892fcdccaa09
 
 # 29 april 2022
 # added 992e69cc89a244b84138c65ce4ba608d0b72afc8
