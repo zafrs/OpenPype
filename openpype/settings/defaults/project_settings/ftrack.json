@@ -352,6 +352,10 @@
                 }
             ]
         },
+        "CollectFtrackCustomAttributeData": {
+            "enabled": false,
+            "custom_attribute_keys": []
+        },
         "IntegrateFtrackNote": {
             "enabled": true,
             "note_template": "{intent}: {comment}",
@@ -402,7 +406,8 @@
                 "redshiftproxy": "cache",
                 "usd": "usd"
             },
-            "keep_first_subset_name_for_review": true
+            "keep_first_subset_name_for_review": true,
+            "asset_versions_status_profiles": []
         }
     }
 }

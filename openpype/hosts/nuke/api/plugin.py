@@ -1,6 +1,8 @@
 import os
 import random
 import string
+from collections import OrderedDict
+from abc import abstractmethod
 
 import nuke
 
@@ -258,8 +260,6 @@ class ExporterReview(object):
             return nuke_imageio["viewer"]["viewerProcess"]
 
 
-
-
 class ExporterReviewLut(ExporterReview):
     """
     Generator object for review lut from Nuke
@@ -407,6 +407,7 @@ class ExporterReviewMov(ExporterReview):
         # deal with now lut defined in viewer lut
         self.viewer_lut_raw = klass.viewer_lut_raw
         self.write_colorspace = instance.data["colorspace"]
+        self.render_group_node = instance[0]
 
         self.name = name or "baked"
         self.ext = ext or "mov"
@@ -428,11 +429,12 @@ class ExporterReviewMov(ExporterReview):
 
     def render(self, render_node_name):
         self.log.info("Rendering...  ")
-        # Render Write node
-        nuke.execute(
-            render_node_name,
-            int(self.first_frame),
-            int(self.last_frame))
+        with self.render_group_node:
+            # Render Write node
+            nuke.execute(
+                render_node_name,
+                int(self.first_frame),
+                int(self.last_frame))
 
         self.log.info("Rendered...")
 
@@ -476,99 +478,100 @@ class ExporterReviewMov(ExporterReview):
         self._temp_nodes[subset] = []
         # ---------- start nodes creation
 
-        # Read node
-        r_node = nuke.createNode("Read")
-        r_node["file"].setValue(self.path_in)
-        r_node["first"].setValue(self.first_frame)
-        r_node["origfirst"].setValue(self.first_frame)
-        r_node["last"].setValue(self.last_frame)
-        r_node["origlast"].setValue(self.last_frame)
-        r_node["colorspace"].setValue(self.write_colorspace)
+        with self.render_group_node:
+            # Read node
+            r_node = nuke.createNode("Read")
+            r_node["file"].setValue(self.path_in)
+            r_node["first"].setValue(self.first_frame)
+            r_node["origfirst"].setValue(self.first_frame)
+            r_node["last"].setValue(self.last_frame)
+            r_node["origlast"].setValue(self.last_frame)
+            r_node["colorspace"].setValue(self.write_colorspace)
 
-        if read_raw:
-            r_node["raw"].setValue(1)
-
-        # connect
-        self._temp_nodes[subset].append(r_node)
-        self.previous_node = r_node
-        self.log.debug("Read...   `{}`".format(self._temp_nodes[subset]))
-
-        # add reformat node
-        if reformat_node_add:
-            # append reformated tag
-            add_tags.append("reformated")
-
-            rf_node = nuke.createNode("Reformat")
-            for kn_conf in reformat_node_config:
-                _type = kn_conf["type"]
-                k_name = str(kn_conf["name"])
-                k_value = kn_conf["value"]
-
-                # to remove unicode as nuke doesn't like it
-                if _type == "string":
-                    k_value = str(kn_conf["value"])
-
-                rf_node[k_name].setValue(k_value)
+            if read_raw:
+                r_node["raw"].setValue(1)
 
             # connect
-            rf_node.setInput(0, self.previous_node)
-            self._temp_nodes[subset].append(rf_node)
-            self.previous_node = rf_node
-            self.log.debug(
-                "Reformat...   `{}`".format(self._temp_nodes[subset]))
+            self._temp_nodes[subset].append(r_node)
+            self.previous_node = r_node
+            self.log.debug("Read...   `{}`".format(self._temp_nodes[subset]))
 
-        # only create colorspace baking if toggled on
-        if bake_viewer_process:
-            if bake_viewer_input_process_node:
-                # View Process node
-                ipn = self.get_view_input_process_node()
-                if ipn is not None:
-                    # connect
-                    ipn.setInput(0, self.previous_node)
-                    self._temp_nodes[subset].append(ipn)
-                    self.previous_node = ipn
-                    self.log.debug(
-                        "ViewProcess...   `{}`".format(
-                            self._temp_nodes[subset]))
+            # add reformat node
+            if reformat_node_add:
+                # append reformated tag
+                add_tags.append("reformated")
 
-            if not self.viewer_lut_raw:
-                # OCIODisplay
-                dag_node = nuke.createNode("OCIODisplay")
-                dag_node["view"].setValue(str(baking_view_profile))
+                rf_node = nuke.createNode("Reformat")
+                for kn_conf in reformat_node_config:
+                    _type = kn_conf["type"]
+                    k_name = str(kn_conf["name"])
+                    k_value = kn_conf["value"]
+
+                    # to remove unicode as nuke doesn't like it
+                    if _type == "string":
+                        k_value = str(kn_conf["value"])
+
+                    rf_node[k_name].setValue(k_value)
 
                 # connect
-                dag_node.setInput(0, self.previous_node)
-                self._temp_nodes[subset].append(dag_node)
-                self.previous_node = dag_node
-                self.log.debug("OCIODisplay...   `{}`".format(
-                    self._temp_nodes[subset]))
+                rf_node.setInput(0, self.previous_node)
+                self._temp_nodes[subset].append(rf_node)
+                self.previous_node = rf_node
+                self.log.debug(
+                    "Reformat...   `{}`".format(self._temp_nodes[subset]))
 
-        # Write node
-        write_node = nuke.createNode("Write")
-        self.log.debug("Path: {}".format(self.path))
-        write_node["file"].setValue(str(self.path))
-        write_node["file_type"].setValue(str(self.ext))
+            # only create colorspace baking if toggled on
+            if bake_viewer_process:
+                if bake_viewer_input_process_node:
+                    # View Process node
+                    ipn = self.get_view_input_process_node()
+                    if ipn is not None:
+                        # connect
+                        ipn.setInput(0, self.previous_node)
+                        self._temp_nodes[subset].append(ipn)
+                        self.previous_node = ipn
+                        self.log.debug(
+                            "ViewProcess...   `{}`".format(
+                                self._temp_nodes[subset]))
 
-        # Knobs `meta_codec` and `mov64_codec` are not available on centos.
-        # TODO shouldn't this come from settings on outputs?
-        try:
-            write_node["meta_codec"].setValue("ap4h")
-        except Exception:
-            self.log.info("`meta_codec` knob was not found")
+                if not self.viewer_lut_raw:
+                    # OCIODisplay
+                    dag_node = nuke.createNode("OCIODisplay")
+                    dag_node["view"].setValue(str(baking_view_profile))
 
-        try:
-            write_node["mov64_codec"].setValue("ap4h")
-            write_node["mov64_fps"].setValue(float(fps))
-        except Exception:
-            self.log.info("`mov64_codec` knob was not found")
+                    # connect
+                    dag_node.setInput(0, self.previous_node)
+                    self._temp_nodes[subset].append(dag_node)
+                    self.previous_node = dag_node
+                    self.log.debug("OCIODisplay...   `{}`".format(
+                        self._temp_nodes[subset]))
 
-        write_node["mov64_write_timecode"].setValue(1)
-        write_node["raw"].setValue(1)
-        # connect
-        write_node.setInput(0, self.previous_node)
-        self._temp_nodes[subset].append(write_node)
-        self.log.debug("Write...   `{}`".format(self._temp_nodes[subset]))
-        # ---------- end nodes creation
+            # Write node
+            write_node = nuke.createNode("Write")
+            self.log.debug("Path: {}".format(self.path))
+            write_node["file"].setValue(str(self.path))
+            write_node["file_type"].setValue(str(self.ext))
+
+            # Knobs `meta_codec` and `mov64_codec` are not available on centos.
+            # TODO shouldn't this come from settings on outputs?
+            try:
+                write_node["meta_codec"].setValue("ap4h")
+            except Exception:
+                self.log.info("`meta_codec` knob was not found")
+
+            try:
+                write_node["mov64_codec"].setValue("ap4h")
+                write_node["mov64_fps"].setValue(float(fps))
+            except Exception:
+                self.log.info("`mov64_codec` knob was not found")
+
+            write_node["mov64_write_timecode"].setValue(1)
+            write_node["raw"].setValue(1)
+            # connect
+            write_node.setInput(0, self.previous_node)
+            self._temp_nodes[subset].append(write_node)
+            self.log.debug("Write...   `{}`".format(self._temp_nodes[subset]))
+            # ---------- end nodes creation
 
         # ---------- render or save to nk
         if self.publish_on_farm:
@@ -594,3 +597,140 @@ class ExporterReviewMov(ExporterReview):
         nuke.scriptSave()
 
         return self.data
+
+
+class AbstractWriteRender(OpenPypeCreator):
+    """Abstract creator to gather similar implementation for Write creators"""
+    name = ""
+    label = ""
+    hosts = ["nuke"]
+    n_class = "Write"
+    family = "render"
+    icon = "sign-out"
+    defaults = ["Main", "Mask"]
+
+    def __init__(self, *args, **kwargs):
+        super(AbstractWriteRender, self).__init__(*args, **kwargs)
+
+        data = OrderedDict()
+
+        data["family"] = self.family
+        data["families"] = self.n_class
+
+        for k, v in self.data.items():
+            if k not in data.keys():
+                data.update({k: v})
+
+        self.data = data
+        self.nodes = nuke.selectedNodes()
+        self.log.debug("_ self.data: '{}'".format(self.data))
+
+    def process(self):
+
+        inputs = []
+        outputs = []
+        instance = nuke.toNode(self.data["subset"])
+        selected_node = None
+
+        # use selection
+        if (self.options or {}).get("useSelection"):
+            nodes = self.nodes
+
+            if not (len(nodes) < 2):
+                msg = ("Select only one node. "
+                       "The node you want to connect to, "
+                       "or tick off `Use selection`")
+                self.log.error(msg)
+                nuke.message(msg)
+                return
+
+            if len(nodes) == 0:
+                msg = (
+                    "No nodes selected. Please select a single node to connect"
+                    " to or tick off `Use selection`"
+                )
+                self.log.error(msg)
+                nuke.message(msg)
+                return
+
+            selected_node = nodes[0]
+            inputs = [selected_node]
+            outputs = selected_node.dependent()
+
+            if instance:
+                if (instance.name() in selected_node.name()):
+                    selected_node = instance.dependencies()[0]
+
+        # if node already exist
+        if instance:
+            # collect input / outputs
+            inputs = instance.dependencies()
+            outputs = instance.dependent()
+            selected_node = inputs[0]
+            # remove old one
+            nuke.delete(instance)
+
+        # recreate new
+        write_data = {
+            "nodeclass": self.n_class,
+            "families": [self.family],
+            "avalon": self.data,
+            "subset": self.data["subset"]
+        }
+
+        # add creator data
+        creator_data = {"creator": self.__class__.__name__}
+        self.data.update(creator_data)
+        write_data.update(creator_data)
+
+        if self.presets.get('fpath_template'):
+            self.log.info("Adding template path from preset")
+            write_data.update(
+                {"fpath_template": self.presets["fpath_template"]}
+            )
+        else:
+            self.log.info("Adding template path from plugin")
+            write_data.update({
+                "fpath_template":
+                    ("{work}/" + self.family + "s/nuke/{subset}"
+                     "/{subset}.{frame}.{ext}")})
+
+        write_node = self._create_write_node(selected_node,
+                                             inputs, outputs,
+                                             write_data)
+
+        # relinking to collected connections
+        for i, input in enumerate(inputs):
+            write_node.setInput(i, input)
+
+        write_node.autoplace()
+
+        for output in outputs:
+            output.setInput(0, write_node)
+
+        write_node = self._modify_write_node(write_node)
+
+        return write_node
+
+    @abstractmethod
+    def _create_write_node(self, selected_node, inputs, outputs, write_data):
+        """Family dependent implementation of Write node creation
+
+        Args:
+            selected_node (nuke.Node)
+            inputs (list of nuke.Node) - input dependencies (what is connected)
+            outputs (list of nuke.Node) - output dependencies
+            write_data (dict) - values used to fill Knobs
+        Returns:
+            node (nuke.Node): group node with  data as Knobs
+        """
+        pass
+
+    @abstractmethod
+    def _modify_write_node(self, write_node):
+        """Family dependent modification of created 'write_node'
+
+        Returns:
+            node (nuke.Node): group node with data as Knobs
+        """
+        pass
