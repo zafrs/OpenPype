@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """Package declaring Pype version."""
-__version__ = "3.9.3-Lumine22052"
+__version__ = "3.9.8-Lumine220521"
 
 # 21 may 2022 
 # add more extension for widget_drop_frame.py at f5db5ac7c9a2dfb7697b31fc6d317156c4a4aab9
