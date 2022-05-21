@@ -2,6 +2,9 @@
 """Package declaring Pype version."""
 __version__ = "3.9.8-Lumine220521"
 
+# 22 may 2022
+# create new version for production from https://github.com/zafrs/OpenPype/tree/Lumine-version/3.9.8-Lumine220521 at 897f356441424eb85811becaca2c6f56d6bf1e9
+
 # 21 may 2022 
 # add more extension for widget_drop_frame.py at f5db5ac7c9a2dfb7697b31fc6d317156c4a4aab9
 
