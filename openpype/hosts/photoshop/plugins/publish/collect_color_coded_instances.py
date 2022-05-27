@@ -84,7 +84,7 @@ class CollectColorCodedInstances(pyblish.api.ContextPlugin):
                 "variant": variant,
                 "family": resolved_family,
                 "task": task_name,
-                "layer": layer.name
+                "layer": layer.clean_name
             }
 
             subset = resolved_subset_template.format(
@@ -151,6 +151,7 @@ class CollectColorCodedInstances(pyblish.api.ContextPlugin):
         instance.data["task"] = task_name
         instance.data["subset"] = subset
         instance.data["layer"] = layer
+        instance.data["families"] = []
 
         return instance
 

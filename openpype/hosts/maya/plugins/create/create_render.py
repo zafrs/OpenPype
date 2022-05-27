@@ -18,9 +18,10 @@ from openpype.api import (
     get_project_settings,
     get_asset)
 from openpype.modules import ModulesManager
-from openpype.pipeline import CreatorError
-
-from avalon.api import Session
+from openpype.pipeline import (
+    CreatorError,
+    legacy_io,
+)
 
 
 class CreateRender(plugin.Creator):
@@ -76,7 +77,8 @@ class CreateRender(plugin.Creator):
         'vray': 'vraySettings.fileNamePrefix',
         'arnold': 'defaultRenderGlobals.imageFilePrefix',
         'renderman': 'rmanGlobals.imageFileFormat',
-        'redshift': 'defaultRenderGlobals.imageFilePrefix'
+        'redshift': 'defaultRenderGlobals.imageFilePrefix',
+        'mayahardware2': 'defaultRenderGlobals.imageFilePrefix',
     }
 
     _image_prefixes = {
@@ -86,7 +88,8 @@ class CreateRender(plugin.Creator):
         # this needs `imageOutputDir`
         # (<ws>/renders/maya/<scene>) set separately
         'renderman': '<layer>_<aov>.<f4>.<ext>',
-        'redshift': 'maya/<Scene>/<RenderLayer>/<RenderLayer>'  # noqa
+        'redshift': 'maya/<Scene>/<RenderLayer>/<RenderLayer>',  # noqa
+        'mayahardware2': 'maya/<Scene>/<RenderLayer>/<RenderLayer>',  # noqa
     }
 
     _aov_chars = {
@@ -105,7 +108,7 @@ class CreateRender(plugin.Creator):
             self.deadline_servers = {}
             return
         self._project_settings = get_project_settings(
-            Session["AVALON_PROJECT"])
+            legacy_io.Session["AVALON_PROJECT"])
 
         # project_settings/maya/create/CreateRender/aov_separator
         try:

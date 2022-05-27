@@ -1,12 +1,18 @@
 # -*- coding: utf-8 -*-
 """Package declaring Pype version."""
-__version__ = "3.9.8-Lumine220521"
+__version__ = "3.10.0-Lumine220521+staging"
 
 # 22 may 2022
 # create new version for production from https://github.com/zafrs/OpenPype/tree/Lumine-version/3.9.8-Lumine220521 at 897f356441424eb85811becaca2c6f56d6bf1e9
 
 # 21 may 2022 
 # add more extension for widget_drop_frame.py at f5db5ac7c9a2dfb7697b31fc6d317156c4a4aab9
+
+# 19 may 2022
+# merge with Lumine-version/3.9.1-Lumine220406 at 373295446f86e56dc0f08a8af460892fcdccaa09
+
+# 29 april 2022
+# added 992e69cc89a244b84138c65ce4ba608d0b72afc8
 
 # 07 april 2022
 # added https://github.com/pypeclub/OpenPype/pull/3018 into openpype-lumine at 503903b42a3f7960ddc0a15180403ad7dd61ef6c
