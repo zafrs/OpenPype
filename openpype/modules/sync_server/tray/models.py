@@ -378,7 +378,6 @@ class _SyncRepresentationModel(QtCore.QAbstractTableModel):
                 project (str): name of project
         """
         self._project = project
-        self.sync_server.set_sync_project_settings()
         # project might have been deactivated in the meantime
         if not self.sync_server.get_sync_project_setting(project):
             return
@@ -522,10 +521,6 @@ class SyncRepresentationSummaryModel(_SyncRepresentationModel):
 
         self.query = self.get_query()
         self.default_query = list(self.get_query())
-
-        representations = self.dbcon.aggregate(pipeline=self.query,
-                                               allowDiskUse=True)
-        self.refresh(representations)
 
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.tick)
@@ -1003,9 +998,6 @@ class SyncRepresentationDetailModel(_SyncRepresentationModel):
         self.sort_criteria = self.DEFAULT_SORT
 
         self.query = self.get_query()
-        representations = self.dbcon.aggregate(pipeline=self.query,
-                                               allowDiskUse=True)
-        self.refresh(representations)
 
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.tick)

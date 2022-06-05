@@ -18,7 +18,8 @@ from .lib import (
     maintained_selection,
     set_avalon_knob_data,
     add_publish_knob,
-    get_nuke_imageio_settings
+    get_nuke_imageio_settings,
+    set_node_knobs_from_settings
 )
 
 
@@ -499,24 +500,15 @@ class ExporterReviewMov(ExporterReview):
                 # append reformated tag
                 add_tags.append("reformated")
 
-                rf_node = nuke.createNode("Reformat")
-                for kn_conf in reformat_node_config:
-                    _type = kn_conf["type"]
-                    k_name = str(kn_conf["name"])
-                    k_value = kn_conf["value"]
+            rf_node = nuke.createNode("Reformat")
+            set_node_knobs_from_settings(rf_node, reformat_node_config)
 
-                    # to remove unicode as nuke doesn't like it
-                    if _type == "string":
-                        k_value = str(kn_conf["value"])
-
-                    rf_node[k_name].setValue(k_value)
-
-                # connect
-                rf_node.setInput(0, self.previous_node)
-                self._temp_nodes[subset].append(rf_node)
-                self.previous_node = rf_node
-                self.log.debug(
-                    "Reformat...   `{}`".format(self._temp_nodes[subset]))
+            # connect
+            rf_node.setInput(0, self.previous_node)
+            self._temp_nodes[subset].append(rf_node)
+            self.previous_node = rf_node
+            self.log.debug(
+                "Reformat...   `{}`".format(self._temp_nodes[subset]))
 
             # only create colorspace baking if toggled on
             if bake_viewer_process:

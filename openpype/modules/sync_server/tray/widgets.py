@@ -122,11 +122,13 @@ class SyncProjectListWidget(QtWidgets.QWidget):
         self._model_reset = False
 
         selected_item = None
-        for project_name in self.sync_server.sync_project_settings.\
-                keys():
+        sync_settings = self.sync_server.sync_project_settings
+        for project_name in sync_settings.keys():
             if self.sync_server.is_paused() or \
                self.sync_server.is_project_paused(project_name):
                 icon = self._get_icon("paused")
+            elif not sync_settings["enabled"]:
+                icon = self._get_icon("disabled")
             else:
                 icon = self._get_icon("synced")
 
@@ -581,7 +583,6 @@ class SyncRepresentationSummaryWidget(_SyncRepresentationWidget):
         super(SyncRepresentationSummaryWidget, self).__init__(parent)
 
         self.sync_server = sync_server
-
         self._selected_ids = set()  # keep last selected _id
 
         txt_filter = QtWidgets.QLineEdit()
@@ -625,7 +626,6 @@ class SyncRepresentationSummaryWidget(_SyncRepresentationWidget):
         column = table_view.model().get_header_index("priority")
         priority_delegate = delegates.PriorityDelegate(self)
         table_view.setItemDelegateForColumn(column, priority_delegate)
-
         layout = QtWidgets.QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.addLayout(top_bar_layout)
@@ -633,21 +633,16 @@ class SyncRepresentationSummaryWidget(_SyncRepresentationWidget):
 
         self.table_view = table_view
         self.model = model
-
         horizontal_header = HorizontalHeader(self)
-
         table_view.setHorizontalHeader(horizontal_header)
         table_view.setSortingEnabled(True)
-
         for column_name, width in self.default_widths:
             idx = model.get_header_index(column_name)
             table_view.setColumnWidth(idx, width)
-
         table_view.doubleClicked.connect(self._double_clicked)
         self.txt_filter.textChanged.connect(lambda: model.set_word_filter(
             self.txt_filter.text()))
         table_view.customContextMenuRequested.connect(self._on_context_menu)
-
         model.refresh_started.connect(self._save_scrollbar)
         model.refresh_finished.connect(self._set_scrollbar)
         model.modelReset.connect(self._set_selection)
@@ -963,7 +958,6 @@ class HorizontalHeader(QtWidgets.QHeaderView):
         super(HorizontalHeader, self).__init__(QtCore.Qt.Horizontal, parent)
         self._parent = parent
         self.checked_values = {}
-
         self.setModel(self._parent.model)
 
         self.setSectionsClickable(True)
