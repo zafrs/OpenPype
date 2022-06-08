@@ -7,7 +7,7 @@ from openpype.hosts.nuke.api.lib import (
 
 class CreateWriteStillPNG(plugin.AbstractWriteRender):
     # change this to template preset
-    name = "WriteStillFrame"
+    name = "WriteStillFramePNG"
     label = "Create Write Still Image"
     hosts = ["nuke"]
     n_class = "Write"
