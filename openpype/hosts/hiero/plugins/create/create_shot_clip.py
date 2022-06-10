@@ -134,7 +134,7 @@ class CreateShotClip(phiero.Creator):
             "order": 3,
             "value": {
                 "subsetName": {
-                    "value": ["<track_name>", "main", "bg", "fg", "bg",
+                    "value": ["<track_name>", "main", "ic", "im", "imm", "in",
                               "animatic"],
                     "type": "QComboBox",
                     "label": "Subset Name",
