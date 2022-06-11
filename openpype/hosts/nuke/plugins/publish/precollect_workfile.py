@@ -31,7 +31,7 @@ class CollectWorkfile(pyblish.api.ContextPlugin):
         # creating instances per write node
         staging_dir = os.path.dirname(current_file)
         base_name = os.path.basename(current_file)
-        subset = family + task.capitalize()
+        subset = family + "_" + task
 
         # Get frame range
         first_frame = int(root["first_frame"].getValue())

@@ -274,6 +274,31 @@ def _validate_all_atrributes(
     ])
 
 
+def get_track_item_tags(track_item):
+    """
+    Get track item tags excluded openpype tag
+
+    Attributes:
+        trackItem (hiero.core.TrackItem): hiero object
+
+    Returns:
+        hiero.core.Tag: hierarchy, orig clip attributes
+    """
+    returning_tag_data = []
+    # get all tags from track item
+    _tags = track_item.tags()
+    if not _tags:
+        return []
+
+    # collect all tags which are not openpype tag
+    returning_tag_data.extend(
+        tag for tag in _tags
+        if tag.name() != self.pype_tag_name
+    )
+
+    return returning_tag_data
+
+
 def get_track_item_pype_tag(track_item):
     """
     Get pype track item tag created by creator or loader plugin.
@@ -432,9 +457,6 @@ def sync_avalon_data_to_workfile():
     anatomy = Anatomy(project_name)
     work_template = anatomy.templates["work"]["path"]
     work_root = anatomy.root_value_for_template(work_template)
-    active_project_root = (
-        os.path.join(work_root, project_name)
-    ).replace("\\", "/")
     # getting project
     project = get_current_project()
 
@@ -443,6 +465,15 @@ def sync_avalon_data_to_workfile():
 
     log.debug("Synchronizing Pype metadata to project: {}".format(
         project.name()))
+
+    # get project data from avalon db
+    project_doc = avalon.io.find_one({"type": "project"})
+    project_data = project_doc["data"]
+    project_code = project_doc["data"].get("code")
+
+    active_project_root = (
+        os.path.join(work_root, project_code)
+    ).replace("\\", "/")
 
     # set project root with backward compatibility
     try:

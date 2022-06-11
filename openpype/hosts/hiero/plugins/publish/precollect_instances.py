@@ -106,7 +106,10 @@ class PrecollectInstances(pyblish.api.ContextPlugin):
 
                 # clip's effect
                 "clipEffectItems": subtracks,
-                "clipAnnotations": annotations
+                "clipAnnotations": annotations,
+
+                # add all additional tags
+                "tags": phiero.get_track_item_tags(track_item)
             })
 
             # otio clip data
@@ -185,7 +188,9 @@ class PrecollectInstances(pyblish.api.ContextPlugin):
             return
 
         asset = data["asset"]
-        subset = "shotMain"
+        # subset = "shotMain"
+        subset = "shot_main"
+
 
         # insert family into families
         family = "shot"
@@ -226,7 +231,9 @@ class PrecollectInstances(pyblish.api.ContextPlugin):
             return
 
         asset = data["asset"]
-        subset = "audioMain"
+        # subset = "audioMain"
+        subset = "audio_main"
+
 
         # insert family into families
         family = "audio"

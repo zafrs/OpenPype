@@ -15,11 +15,16 @@ class CreateWriteStill(plugin.AbstractWriteRender):
     icon = "image"
 
     # settings
-    fpath_template = "{work}/render/nuke/{subset}/{subset}.{ext}"
+    fpath_template = "{work}/render/{subset}/{subset}.{ext}"
     defaults = [
         "ImageFrame",
         "MPFrame",
-        "LayoutFrame"
+        "LayoutFrame",
+        "lightingFrame",
+        "mattePaintFrame",
+        "fxFrame",
+        "compositingFrame",
+        "animationFrame"
     ]
     prenodes = {
         "FrameHold01": {

@@ -39,6 +39,16 @@ class PSItem(object):
         return (self.name.replace(PhotoshopServerStub.PUBLISH_ICON, '')
                          .replace(PhotoshopServerStub.LOADED_ICON, ''))
 
+    @property
+    def clean_name(self):
+        """Returns layer name without publish icon highlight
+
+        Returns:
+            (str)
+        """
+        return (self.name.replace(PhotoshopServerStub.PUBLISH_ICON, '')
+                         .replace(PhotoshopServerStub.LOADED_ICON, ''))
+
 
 class PhotoshopServerStub:
     """
