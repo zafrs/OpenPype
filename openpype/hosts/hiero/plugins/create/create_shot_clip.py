@@ -162,7 +162,7 @@ class CreateShotClip(phiero.Creator):
                     "toolTip": "Process subsets with corresponding audio",  # noqa
                     "order": 3},
                 "sourceResolution": {
-                    "value": False,
+                    "value": True,
                     "type": "QCheckBox",
                     "label": "Source resolution",
                     "target": "tag",
