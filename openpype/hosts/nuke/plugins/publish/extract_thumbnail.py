@@ -63,11 +63,11 @@ class ExtractThumbnail(openpype.api.Extractor):
             "StagingDir `{0}`...".format(instance.data["stagingDir"]))
 
         temporary_nodes = []
-        with node:
-            # try to connect already rendered images
-            if self.use_rendered:
-                collection = instance.data.get("collection", None)
-                self.log.debug("__ collection: `{}`".format(collection))
+
+        # try to connect already rendered images
+        previous_node = node
+        collection = instance.data.get("collection", None)
+        self.log.debug("__ collection: `{}`".format(collection))
 
                 if collection:
                     # get path
@@ -75,26 +75,47 @@ class ExtractThumbnail(openpype.api.Extractor):
                         "{head}{padding}{tail}"))
                     fhead = collection.format("{head}")
 
-                    thumb_fname = list(collection)[mid_frame]
-                else:
-                    fname = thumb_fname = os.path.basename(
-                        instance.data.get("path", None))
-                    fhead = os.path.splitext(fname)[0] + "."
+            thumb_fname = list(collection)[mid_frame]
+        else:
+            fname = thumb_fname = os.path.basename(
+                instance.data.get("path", None))
+            fhead = os.path.splitext(fname)[0] + "."
 
-                self.log.debug("__ fhead: `{}`".format(fhead))
+        self.log.debug("__ fhead: `{}`".format(fhead))
 
-                if "#" in fhead:
-                    fhead = fhead.replace("#", "")[:-1]
+        if "#" in fhead:
+            fhead = fhead.replace("#", "")[:-1]
+
+        path_render = os.path.join(
+            staging_dir, thumb_fname).replace("\\", "/")
+        self.log.debug("__ path_render: `{}`".format(path_render))
+
+        if self.use_rendered and os.path.isfile(path_render):
+            # check if file exist otherwise connect to write node
+            rnode = nuke.createNode("Read")
 
                 path_render = os.path.join(
                     staging_dir, thumb_fname).replace("\\", "/")
                 self.log.debug("__ path_render: `{}`".format(path_render))
 
-                # check if file exist otherwise connect to write node
-                if os.path.isfile(path_render):
-                    rnode = nuke.createNode("Read")
+            # turn it raw if none of baking is ON
+            if all([
+                not self.bake_viewer_input_process,
+                not self.bake_viewer_process
+            ]):
+                rnode["raw"].setValue(True)
 
-                    rnode["file"].setValue(path_render)
+            temporary_nodes.append(rnode)
+            previous_node = rnode
+
+        # bake viewer input look node into thumbnail image
+        if self.bake_viewer_input_process:
+            # get input process and connect it to baking
+            ipn = self.get_view_process_node()
+            if ipn is not None:
+                ipn.setInput(0, previous_node)
+                previous_node = ipn
+                temporary_nodes.append(ipn)
 
                     # turn it raw if none of baking is ON
                     if all([
@@ -117,7 +138,12 @@ class ExtractThumbnail(openpype.api.Extractor):
                     previous_node = ipn
                     temporary_nodes.append(ipn)
 
-            reformat_node = nuke.createNode("Reformat")
+        # bake viewer colorspace into thumbnail image
+        if self.bake_viewer_process:
+            dag_node = nuke.createNode("OCIODisplay")
+            dag_node.setInput(0, previous_node)
+            previous_node = dag_node
+            temporary_nodes.append(dag_node)
 
             ref_node = self.nodes.get("Reformat", None)
             if ref_node:
@@ -165,6 +191,8 @@ class ExtractThumbnail(openpype.api.Extractor):
         }
         instance.data["representations"].append(repre)
 
+        # Render frames
+        nuke.execute(write_node.name(), mid_frame, mid_frame)
 
         self.log.debug(
             "representations: {}".format(instance.data["representations"]))
