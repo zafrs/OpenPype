@@ -69,11 +69,11 @@ class ExtractThumbnail(openpype.api.Extractor):
         collection = instance.data.get("collection", None)
         self.log.debug("__ collection: `{}`".format(collection))
 
-                if collection:
-                    # get path
-                    fname = os.path.basename(collection.format(
-                        "{head}{padding}{tail}"))
-                    fhead = collection.format("{head}")
+        if collection:
+            # get path
+            fname = os.path.basename(collection.format(
+                "{head}{padding}{tail}"))
+            fhead = collection.format("{head}")
 
             thumb_fname = list(collection)[mid_frame]
         else:
@@ -94,9 +94,7 @@ class ExtractThumbnail(openpype.api.Extractor):
             # check if file exist otherwise connect to write node
             rnode = nuke.createNode("Read")
 
-                path_render = os.path.join(
-                    staging_dir, thumb_fname).replace("\\", "/")
-                self.log.debug("__ path_render: `{}`".format(path_render))
+            rnode["file"].setValue(path_render)
 
             # turn it raw if none of baking is ON
             if all([
@@ -117,26 +115,19 @@ class ExtractThumbnail(openpype.api.Extractor):
                 previous_node = ipn
                 temporary_nodes.append(ipn)
 
-                    # turn it raw if none of baking is ON
-                    if all([
-                        not self.bake_viewer_input_process,
-                        not self.bake_viewer_process
-                    ]):
-                        rnode["raw"].setValue(True)
+        reformat_node = nuke.createNode("Reformat")
 
-                    temporary_nodes.append(rnode)
-                    previous_node = rnode
-                else:
-                    previous_node = node
+        ref_node = self.nodes.get("Reformat", None)
+        if ref_node:
+            for k, v in ref_node:
+                self.log.debug("k, v: {0}:{1}".format(k, v))
+                if isinstance(v, unicode):
+                    v = str(v)
+                reformat_node[k].setValue(v)
 
-            # bake viewer input look node into thumbnail image
-            if self.bake_viewer_input_process:
-                # get input process and connect it to baking
-                ipn = self.get_view_process_node()
-                if ipn is not None:
-                    ipn.setInput(0, previous_node)
-                    previous_node = ipn
-                    temporary_nodes.append(ipn)
+        reformat_node.setInput(0, previous_node)
+        previous_node = reformat_node
+        temporary_nodes.append(reformat_node)
 
         # bake viewer colorspace into thumbnail image
         if self.bake_viewer_process:
@@ -145,40 +136,17 @@ class ExtractThumbnail(openpype.api.Extractor):
             previous_node = dag_node
             temporary_nodes.append(dag_node)
 
-            ref_node = self.nodes.get("Reformat", None)
-            if ref_node:
-                for k, v in ref_node:
-                    self.log.debug("k, v: {0}:{1}".format(k, v))
-                    if isinstance(v, unicode):
-                        v = str(v)
-                    reformat_node[k].setValue(v)
-
-            reformat_node.setInput(0, previous_node)
-            previous_node = reformat_node
-            temporary_nodes.append(reformat_node)
-
-            # bake viewer colorspace into thumbnail image
-            if self.bake_viewer_process:
-                dag_node = nuke.createNode("OCIODisplay")
-                dag_node.setInput(0, previous_node)
-                previous_node = dag_node
-                temporary_nodes.append(dag_node)
-
-            # create write node
-            write_node = nuke.createNode("Write")
-            file = fhead + "jpg"
-            name = "thumbnail"
-            path = os.path.join(staging_dir, file).replace("\\", "/")
-            instance.data["thumbnail"] = path
-            write_node["file"].setValue(path)
-            write_node["file_type"].setValue("jpg")
-            write_node["raw"].setValue(1)
-            write_node.setInput(0, previous_node)
-            temporary_nodes.append(write_node)
-
-            # Render frames
-            nuke.execute(write_node.name(), mid_frame, mid_frame)
-
+        # create write node
+        write_node = nuke.createNode("Write")
+        file = fhead + "jpg"
+        name = "thumbnail"
+        path = os.path.join(staging_dir, file).replace("\\", "/")
+        instance.data["thumbnail"] = path
+        write_node["file"].setValue(path)
+        write_node["file_type"].setValue("jpg")
+        write_node["raw"].setValue(1)
+        write_node.setInput(0, previous_node)
+        temporary_nodes.append(write_node)
         tags = ["thumbnail", "publish_on_farm"]
 
         repre = {
