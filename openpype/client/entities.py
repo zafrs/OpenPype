@@ -146,6 +146,7 @@ def _get_assets(
     project_name,
     asset_ids=None,
     asset_names=None,
+    parent_ids=None,
     standard=True,
     archived=False,
     fields=None
@@ -161,6 +162,7 @@ def _get_assets(
         project_name (str): Name of project where to look for queried entities.
         asset_ids (list[str|ObjectId]): Asset ids that should be found.
         asset_names (list[str]): Name assets that should be found.
+        parent_ids (list[str|ObjectId]): Parent asset ids.
         standard (bool): Query standart assets (type 'asset').
         archived (bool): Query archived assets (type 'archived_asset').
         fields (list[str]): Fields that should be returned. All fields are
@@ -196,6 +198,12 @@ def _get_assets(
             return []
         query_filter["name"] = {"$in": list(asset_names)}
 
+    if parent_ids is not None:
+        parent_ids = _convert_ids(parent_ids)
+        if not parent_ids:
+            return []
+        query_filter["data.visualParent"] = {"$in": parent_ids}
+
     conn = _get_project_connection(project_name)
 
     return conn.find(query_filter, _prepare_fields(fields))
@@ -205,6 +213,7 @@ def get_assets(
     project_name,
     asset_ids=None,
     asset_names=None,
+    parent_ids=None,
     archived=False,
     fields=None
 ):
@@ -219,6 +228,7 @@ def get_assets(
         project_name (str): Name of project where to look for queried entities.
         asset_ids (list[str|ObjectId]): Asset ids that should be found.
         asset_names (list[str]): Name assets that should be found.
+        parent_ids (list[str|ObjectId]): Parent asset ids.
         archived (bool): Add also archived assets.
         fields (list[str]): Fields that should be returned. All fields are
             returned if 'None' is passed.
@@ -229,7 +239,13 @@ def get_assets(
     """
 
     return _get_assets(
-        project_name, asset_ids, asset_names, True, archived, fields
+        project_name,
+        asset_ids,
+        asset_names,
+        parent_ids,
+        True,
+        archived,
+        fields
     )
 
 
@@ -237,6 +253,7 @@ def get_archived_assets(
     project_name,
     asset_ids=None,
     asset_names=None,
+    parent_ids=None,
     fields=None
 ):
     """Archived assets for specified project by passed filters.
@@ -250,6 +267,7 @@ def get_archived_assets(
         project_name (str): Name of project where to look for queried entities.
         asset_ids (list[str|ObjectId]): Asset ids that should be found.
         asset_names (list[str]): Name assets that should be found.
+        parent_ids (list[str|ObjectId]): Parent asset ids.
         fields (list[str]): Fields that should be returned. All fields are
             returned if 'None' is passed.
 
@@ -259,7 +277,7 @@ def get_archived_assets(
     """
 
     return _get_assets(
-        project_name, asset_ids, asset_names, False, True, fields
+        project_name, asset_ids, asset_names, parent_ids, False, True, fields
     )
 
 
@@ -789,14 +807,19 @@ def get_last_version_by_subset_id(project_name, subset_id, fields=None):
 
 
 def get_last_version_by_subset_name(
-    project_name, subset_name, asset_id, fields=None
+    project_name, subset_name, asset_id=None, asset_name=None, fields=None
 ):
-    """Last version for passed subset name under asset id.
+    """Last version for passed subset name under asset id/name.
+
+    It is required to pass 'asset_id' or 'asset_name'. Asset id is recommended
+    if is available.
 
     Args:
         project_name (str): Name of project where to look for queried entities.
         subset_name (str): Name of subset.
-        asset_id (str|ObjectId): Asset id which is parnt of passed subset name.
+        asset_id (str|ObjectId): Asset id which is parent of passed
+            subset name.
+        asset_name (str): Asset name which is parent of passed subset name.
         fields (list[str]): Fields that should be returned. All fields are
             returned if 'None' is passed.
 
@@ -805,6 +828,14 @@ def get_last_version_by_subset_name(
         Dict: Version document which can be reduced to specified 'fields'.
     """
 
+    if not asset_id and not asset_name:
+        return None
+
+    if not asset_id:
+        asset_doc = get_asset_by_name(project_name, asset_name, fields=["_id"])
+        if not asset_doc:
+            return None
+        asset_id = asset_doc["_id"]
     subset_doc = get_subset_by_name(
         project_name, subset_name, asset_id, fields=["_id"]
     )
