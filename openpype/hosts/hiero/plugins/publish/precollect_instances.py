@@ -1,5 +1,5 @@
 import pyblish
-import openpype
+from openpype.pipeline.editorial import is_overlapping_otio_ranges
 from openpype.hosts.hiero import api as phiero
 from openpype.hosts.hiero.api.otio import hiero_export
 import hiero
@@ -279,7 +279,7 @@ class PrecollectInstances(pyblish.api.ContextPlugin):
             parent_range = otio_audio.range_in_parent()
 
             # if any overaling clip found then return True
-            if openpype.lib.is_overlapping_otio_ranges(
+            if is_overlapping_otio_ranges(
                     parent_range, timeline_range, strict=False):
                 return True
 
@@ -308,7 +308,7 @@ class PrecollectInstances(pyblish.api.ContextPlugin):
                 continue
             self.log.debug("__ parent_range: {}".format(parent_range))
             self.log.debug("__ timeline_range: {}".format(timeline_range))
-            if openpype.lib.is_overlapping_otio_ranges(
+            if is_overlapping_otio_ranges(
                     parent_range, timeline_range, strict=True):
 
                 # add pypedata marker to otio_clip metadata
