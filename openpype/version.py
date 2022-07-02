@@ -1,8 +1,14 @@
 # -*- coding: utf-8 -*-
 """Package declaring Pype version."""
-__version__ = "3.12.1-Lumine220701"
+__version__ = "3.12.1-Lumine220702"
 
 # History Branch
+
+# 01 July 2022
+# add More extenstion standaalonepublish at 0b435f7a3c27fe2b5de6293377e4e8327485073a
+
+# 21 July 2022
+# add more extenstion Davinci at 13c151c03c83e73498eddd81684394ea44266e60
 
 # 06 june 2022
 # Merge remote-tracking branch 'pypeclub/bugfix/site_sync_start_speedup' into Lumine-version/3.10.0-Lumine270521 at 
