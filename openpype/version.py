@@ -4,6 +4,9 @@ __version__ = "3.12.1-Lumine220704"
 
 # History Branch
 
+# 04 July 2022
+# add auto dept inside deadline submiter at 1199377ca59b71a4561284082cd4442272f79831
+
 # 01 July 2022
 # add More extenstion standaalonepublish at 0b435f7a3c27fe2b5de6293377e4e8327485073a
 
