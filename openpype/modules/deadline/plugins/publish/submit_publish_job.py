@@ -257,8 +257,7 @@ class ProcessSubmittedJobOnFarm(pyblish.api.InstancePlugin):
                 "Name": job_name,
                 "UserName": job["Props"]["User"],
                 "Comment": instance.context.data.get("comment", ""),
-
-                "Department": self.deadline_department,
+                "Department": environment["AVALON_TASK"],
                 "ChunkSize": self.deadline_chunk_size,
                 "Priority": priority,
 
@@ -1045,7 +1044,7 @@ class ProcessSubmittedJobOnFarm(pyblish.api.InstancePlugin):
                     get publish_path
 
         Args:
-            anatomy (pype.lib.anatomy.Anatomy):
+            anatomy (openpype.pipeline.anatomy.Anatomy):
             template_data (dict): pre-calculated collected data for process
             asset (string): asset name
             subset (string): subset name (actually group name of subset)
