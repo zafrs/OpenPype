@@ -473,7 +473,7 @@ def sync_avalon_data_to_workfile():
         project.name()))
 
     # get project data from avalon db
-    project_doc = avalon.io.find_one({"type": "project"})
+    project_doc = legacy_io.find_one({"type": "project"})
     project_data = project_doc["data"]
     project_code = project_doc["data"].get("code")
 
