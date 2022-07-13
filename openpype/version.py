@@ -3,6 +3,8 @@
 __version__ = "3.12.1-Lumine220713"
 
 # History Branch
+# 13 July 2022
+# load reference auto camerarig at 6c72d27df37e0e6348e6571b8aece2ff7234a1c7
 
 # 11 July 2022
 # add Hiero fix at 29e7c514c9772db42ad63101ca22f09e0e0ee02f
