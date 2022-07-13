@@ -35,6 +35,7 @@ class ReferenceLoader(openpype.hosts.maya.api.plugin.ReferenceLoader):
 
     # Name of creator class that will be used to create animation instance
     animation_creator_name = "CreateAnimation"
+    cameraRig_creator_name = "CreateCamera"
 
     def process_reference(self, context, name, namespace, options):
         import maya.cmds as cmds
@@ -125,6 +126,8 @@ class ReferenceLoader(openpype.hosts.maya.api.plugin.ReferenceLoader):
 
             if family == "rig":
                 self._post_process_rig(name, namespace, context, options)
+            elif family == "camerarig":
+                self._post_process_cameraRig(name, "camera_main", context, options)
             else:
                 if "translate" in options:
                     cmds.setAttr(group_name + ".t", *options["translate"])
@@ -163,3 +166,30 @@ class ReferenceLoader(openpype.hosts.maya.api.plugin.ReferenceLoader):
                 options={"useSelection": True},
                 data={"dependencies": dependency}
             )
+
+
+    def _post_process_cameraRig(self, name, namespace, context, options):
+        # Find the roots amongst the loaded nodes
+        camera = next((node for node in self if
+                         node.endswith("camera_main")), None)
+
+        if not camera:
+            return
+
+        asset = legacy_io.Session["AVALON_ASSET"]
+        dependency = str(context["representation"]["_id"])
+
+        self.log.info("Creating subset: {}".format(namespace))
+
+        # Create the animation instance
+        creator_plugin = get_creator_by_name(self.cameraRig_creator_name)
+        with maintained_selection():
+            cmds.select(camera, noExpand=True)
+            legacy_create(
+                creator_plugin,
+                name=namespace,
+                asset=asset,
+                options={"useSelection": True},
+                data={"dependencies": dependency}
+            )
+
