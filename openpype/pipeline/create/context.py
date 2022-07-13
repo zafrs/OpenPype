@@ -497,6 +497,20 @@ class CreatedInstance:
         return self._data["subset"]
 
     @property
+    def label(self):
+        label = self._data.get("label")
+        if not label:
+            label = self.subset_name
+        return label
+
+    @property
+    def group_label(self):
+        label = self._data.get("group")
+        if label:
+            return label
+        return self.creator.get_group_label()
+
+    @property
     def creator_identifier(self):
         return self.creator.identifier
 
@@ -749,6 +763,10 @@ class CreateContext:
         return os.environ["AVALON_APP"]
 
     @property
+    def project_name(self):
+        return self.dbcon.active_project()
+
+    @property
     def log(self):
         """Dynamic access to logger."""
         if self._log is None:
@@ -839,9 +857,8 @@ class CreateContext:
         self.plugins_with_defs = plugins_with_defs
 
         # Prepare settings
-        project_name = self.dbcon.Session["AVALON_PROJECT"]
         system_settings = get_system_settings()
-        project_settings = get_project_settings(project_name)
+        project_settings = get_project_settings(self.project_name)
 
         # Discover and prepare creators
         creators = {}
@@ -873,9 +890,9 @@ class CreateContext:
                 continue
 
             creator = creator_class(
-                self,
-                system_settings,
                 project_settings,
+                system_settings,
+                self,
                 self.headless
             )
             creators[creator_identifier] = creator
