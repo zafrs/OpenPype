@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 """Package declaring Pype version."""
-__version__ = "3.12.1-Lumine220704"
+__version__ = "3.12.1-LumineDeveloper220711"
 
 # History Branch
+
+# 11 July 2022
+# add Hiero fix at 29e7c514c9772db42ad63101ca22f09e0e0ee02f
 
 # 04 July 2022
 # add auto dept inside deadline submiter at 1199377ca59b71a4561284082cd4442272f79831
