@@ -1,8 +1,13 @@
 # -*- coding: utf-8 -*-
 """Package declaring Pype version."""
-__version__ = "3.12.1-Lumine220713"
+__version__ = "3.12.1-Lumine220720"
 
 # History Branch
+
+# 20 july 2022
+# create new version 3.12.1-Lumine220720
+# add callback focus for maya at 62650d9782a4b24462251409281fa2beec710112
+
 # 13 July 2022
 # load reference auto camerarig at 6c72d27df37e0e6348e6571b8aece2ff7234a1c7
 
