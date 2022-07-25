@@ -125,6 +125,7 @@ class ExtractPlayblast(openpype.api.Extractor):
 
             self.log.info('using viewport preset: {}'.format(preset))
 
+            panel = None 
             # Update preset with current panel setting
             # if override_viewport_options is turned off
             if not override_viewport_options:
@@ -134,7 +135,8 @@ class ExtractPlayblast(openpype.api.Extractor):
                 preset.update(panel_preset)
 
             path = capture.capture(**preset)
-            cmds.setFocus( panel )
+            if panel :
+                cmds.setFocus( panel )
 
         self.log.debug("playblast path  {}".format(path))
 
