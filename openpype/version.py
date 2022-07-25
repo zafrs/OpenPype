@@ -3,6 +3,8 @@
 __version__ = "3.12.1-Lumine220725"
 
 # History Branch
+# 25 July 
+# Merge branch 'Lumine-version/3.11.1-Lumine220720' into openpype-lumine
 
 # 20 july 2022
 # create new version 3.12.1-Lumine220720
