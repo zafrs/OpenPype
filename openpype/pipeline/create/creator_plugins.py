@@ -102,6 +102,10 @@ class BaseCreator:
 
         return self.create_context.project_name
 
+    @property
+    def host(self):
+        return self.create_context.host
+
     def get_group_label(self):
         """Group label under which are instances grouped in UI.
 
@@ -410,6 +414,12 @@ class Creator(BaseCreator):
                 created instance.
         """
         return self.pre_create_attr_defs
+
+
+class HiddenCreator(BaseCreator):
+    @abstractmethod
+    def create(self, instance_data, source_data):
+        pass
 
 
 class AutoCreator(BaseCreator):
