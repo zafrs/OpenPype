@@ -125,13 +125,18 @@ class ExtractPlayblast(openpype.api.Extractor):
 
             self.log.info('using viewport preset: {}'.format(preset))
 
+            panel = None 
             # Update preset with current panel setting
             # if override_viewport_options is turned off
             if not override_viewport_options:
+                panel = cmds.getPanel( withFocus=True )                
                 panel_preset = capture.parse_active_view()
+                
                 preset.update(panel_preset)
 
             path = capture.capture(**preset)
+            if panel :
+                cmds.setFocus( panel )
 
         self.log.debug("playblast path  {}".format(path))
 
@@ -178,3 +183,4 @@ class ExtractPlayblast(openpype.api.Extractor):
             'camera_name': camera_node_name
         }
         instance.data["representations"].append(representation)
+
