@@ -1,8 +1,12 @@
 # -*- coding: utf-8 -*-
 """Package declaring Pype version."""
-__version__ = "3.12.1-Lumine220726"
+__version__ = "3.12.1-Lumine220802"
 
 # History Branch
+
+# 02 August 202
+# add a8c5fb3f4b85b17b2d9345de551e0f7022ce7e00 
+# create new version ( delivery feature )
 
 # 26 july
 # add 3a2ac54cffcb1b7a1239119c34e8256ee6fe812e into Lumine-version/3.11.1-Lumine220725
