@@ -66,6 +66,21 @@ class ProjectIconView(QtWidgets.QListView):
             self.style().polish(self)
 
             self.verticalScrollBar().setSingleStep(30)
+            self.setContentsMargins( 30,30,30,30)
+
+            self.setStyleSheet("""
+            QListView:item {
+                color: #A9A9A9;
+                padding: 3px;
+            }
+            
+            QListView:item:hover{
+                color: #fff;
+                padding: 0px;
+            }
+            """
+
+            )
 
         elif self.ListMode:
             self.setProperty("mode", "list")
@@ -81,6 +96,21 @@ class ProjectIconView(QtWidgets.QListView):
             self.setAlternatingRowColors(False)
 
             self.verticalScrollBar().setSingleStep(33.33)
+
+
+            self.setStyleSheet("""
+            QListView:item {
+                color: #BEBEBE;
+                padding: 0px;
+            }
+            
+            QListView:item:hover{
+                color: #fff;
+                padding: 0px;
+            }
+            """
+
+            )
 
     def mousePressEvent(self, event):
         if event.button() == QtCore.Qt.RightButton:
@@ -310,7 +340,7 @@ class LauncherWindow(QtWidgets.QDialog):
         asset_panel.back_clicked.connect(self.on_back_clicked)
         asset_panel.session_changed.connect(self.on_session_changed)
 
-        self.resize(650, 795)
+        self.resize(650, 805)
 
         self._page = 0
 
