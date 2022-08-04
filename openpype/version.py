@@ -3,6 +3,11 @@
 __version__ = "3.12.1-Lumine220803"
 
 # History Branch
+
+# 04 August 2022
+# add ac8e64e1bc8f37bac2a77caa04312dc539d61086 create new version Lumine-version/3.12.2-Lumine220805
+# modify launcher and yeti cache
+
 # 03 August 2002
 # add 5a523b383aff0645c7b3b5f7b4e92a962e064518 into Lumine-version/3.11.1-Lumine220802
 # modfy launcher icon
