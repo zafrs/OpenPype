@@ -1,14 +1,26 @@
 # -*- coding: utf-8 -*-
 """Package declaring Pype version."""
-__version__ = "3.12.1-Lumine220726"
+__version__ = "3.12.1-Lumine220803"
 
 # History Branch
 
-# 26 july
+# 04 August 2022
+# add ac8e64e1bc8f37bac2a77caa04312dc539d61086 create new version Lumine-version/3.12.2-Lumine220805
+# modify launcher and yeti cache
+
+# 03 August 2002
+# add 5a523b383aff0645c7b3b5f7b4e92a962e064518 into Lumine-version/3.11.1-Lumine220802
+# modfy launcher icon
+
+# 02 August 2022
+# add a8c5fb3f4b85b17b2d9345de551e0f7022ce7e00 
+# create new version ( delivery feature )
+
+# 26 july 2022
 # add 3a2ac54cffcb1b7a1239119c34e8256ee6fe812e into Lumine-version/3.11.1-Lumine220725
 # update version 3.12.1-Lumine220726
 
-# 25 July 
+# 25 July 2022
 # Merge branch 'Lumine-version/3.11.1-Lumine220720' into openpype-lumine
 
 # 20 july 2022
