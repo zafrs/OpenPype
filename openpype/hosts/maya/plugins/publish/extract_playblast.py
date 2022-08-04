@@ -133,6 +133,7 @@ class ExtractPlayblast(openpype.api.Extractor):
                 panel_preset = capture.parse_active_view()
                 
                 preset.update(panel_preset)
+                cmds.setFocus(panel)
 
             path = capture.capture(**preset)
             if panel :
