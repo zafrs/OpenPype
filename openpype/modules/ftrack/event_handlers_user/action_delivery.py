@@ -564,6 +564,12 @@ class Delivery(BaseAction):
             self.log.debug(debug_msg)
 
             anatomy_data = copy.deepcopy(repre["context"])
+
+            #===================================================================
+            # fill custom deliveryName to Client purpose
+            anatomy_data = self.fill_deliveryName( session, anatomy_data)
+            #===================================================================
+
             repre_report_items = check_destination_path(repre["_id"],
                                                         anatomy,
                                                         anatomy_data,
@@ -637,6 +643,29 @@ class Delivery(BaseAction):
             "title": "Delivery report",
             "success": False
         }
+
+    def fill_deliveryName( self, session, anatomy_data ):
+        asset = anatomy_data['asset']
+        project_name = anatomy_data['project']['name']
+
+        query = (
+            'Shot where name is "{}"'
+            ' and project.full_name is "{}"'
+        ).format(asset, project_name )
+
+        shot_entity = session.query(query).first()
+        delivery_name = shot_entity['custom_attributes']['deliveryName']
+        camera_name = shot_entity['custom_attributes']['cameraName']
+
+        if delivery_name :
+            delivery_name = delivery_name.strip()
+            camera_name = camera_name.strip()
+            anatomy_data.update( {"deliveryName": delivery_name })
+            anatomy_data.update( {"cameraName": camera_name })
+        else :
+            pass
+
+        return anatomy_data
 
 
 def register(session):
