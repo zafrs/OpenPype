@@ -6,12 +6,35 @@ import logging
 import six
 import platform
 
+import clique
+
 from openpype.client import get_project
 from openpype.settings import get_project_settings
 
 from .profiles_filtering import filter_profiles
 
 log = logging.getLogger(__name__)
+
+
+def format_file_size(file_size, suffix=None):
+    """Returns formatted string with size in appropriate unit.
+
+    Args:
+        file_size (int): Size of file in bytes.
+        suffix (str): Suffix for formatted size. Default is 'B' (as bytes).
+
+    Returns:
+        str: Formatted size using proper unit and passed suffix (e.g. 7 MiB).
+    """
+
+    if suffix is None:
+        suffix = "B"
+
+    for unit in ["", "Ki", "Mi", "Gi", "Ti", "Pi", "Ei", "Zi"]:
+        if abs(file_size) < 1024.0:
+            return "%3.1f%s%s" % (file_size, unit, suffix)
+        file_size /= 1024.0
+    return "%.1f%s%s" % (file_size, "Yi", suffix)
 
 
 def create_hard_link(src_path, dst_path):
@@ -48,6 +71,43 @@ def create_hard_link(src_path, dst_path):
     raise NotImplementedError(
         "Implementation of hardlink for current environment is missing."
     )
+
+
+def collect_frames(files):
+    """Returns dict of source path and its frame, if from sequence
+
+    Uses clique as most precise solution, used when anatomy template that
+    created files is not known.
+
+    Assumption is that frames are separated by '.', negative frames are not
+    allowed.
+
+    Args:
+        files(list) or (set with single value): list of source paths
+
+    Returns:
+        (dict): {'/asset/subset_v001.0001.png': '0001', ....}
+    """
+
+    patterns = [clique.PATTERNS["frames"]]
+    collections, remainder = clique.assemble(
+        files, minimum_items=1, patterns=patterns)
+
+    sources_and_frames = {}
+    if collections:
+        for collection in collections:
+            src_head = collection.head
+            src_tail = collection.tail
+
+            for index in collection.indexes:
+                src_frame = collection.format("{padding}") % index
+                src_file_name = "{}{}{}".format(
+                    src_head, src_frame, src_tail)
+                sources_and_frames[src_file_name] = src_frame
+    else:
+        sources_and_frames[remainder.pop()] = None
+
+    return sources_and_frames
 
 
 def _rreplace(s, a, b, n=1):
@@ -119,12 +179,12 @@ def get_version_from_path(file):
     """Find version number in file path string.
 
     Args:
-        file (string): file path
+        file (str): file path
 
     Returns:
-        v: version number in string ('001')
-
+        str: version number in string ('001')
     """
+
     pattern = re.compile(r"[\._]v([0-9]+)", re.IGNORECASE)
     try:
         return pattern.findall(file)[-1]
@@ -140,16 +200,17 @@ def get_last_version_from_path(path_dir, filter):
     """Find last version of given directory content.
 
     Args:
-        path_dir (string): directory path
+        path_dir (str): directory path
         filter (list): list of strings used as file name filter
 
     Returns:
-        string: file name with last version
+        str: file name with last version
 
     Example:
         last_version_file = get_last_version_from_path(
             "/project/shots/shot01/work", ["shot01", "compositing", "nk"])
     """
+
     assert os.path.isdir(path_dir), "`path_dir` argument needs to be directory"
     assert isinstance(filter, list) and (
         len(filter) != 0), "`filter` argument needs to be list and not empty"
@@ -322,159 +383,3 @@ def create_workdir_extra_folders(
         fullpath = os.path.join(workdir, subfolder)
         if not os.path.exists(fullpath):
             os.makedirs(fullpath)
-
-
-@six.add_metaclass(abc.ABCMeta)
-class HostDirmap:
-    """
-        Abstract class for running dirmap on a workfile in a host.
-
-        Dirmap is used to translate paths inside of host workfile from one
-        OS to another. (Eg. arstist created workfile on Win, different artists
-        opens same file on Linux.)
-
-        Expects methods to be implemented inside of host:
-            on_dirmap_enabled: run host code for enabling dirmap
-            do_dirmap: run host code to do actual remapping
-    """
-
-    def __init__(self, host_name, project_settings, sync_module=None):
-        self.host_name = host_name
-        self.project_settings = project_settings
-        self.sync_module = sync_module  # to limit reinit of Modules
-
-        self._mapping = None  # cache mapping
-
-    @abc.abstractmethod
-    def on_enable_dirmap(self):
-        """
-            Run host dependent operation for enabling dirmap if necessary.
-        """
-
-    @abc.abstractmethod
-    def dirmap_routine(self, source_path, destination_path):
-        """
-            Run host dependent remapping from source_path to destination_path
-        """
-
-    def process_dirmap(self):
-        # type: (dict) -> None
-        """Go through all paths in Settings and set them using `dirmap`.
-
-            If artists has Site Sync enabled, take dirmap mapping directly from
-            Local Settings when artist is syncing workfile locally.
-
-        Args:
-            project_settings (dict): Settings for current project.
-
-        """
-        if not self._mapping:
-            self._mapping = self.get_mappings(self.project_settings)
-        if not self._mapping:
-            return
-
-        log.info("Processing directory mapping ...")
-        self.on_enable_dirmap()
-        log.info("mapping:: {}".format(self._mapping))
-
-        for k, sp in enumerate(self._mapping["source-path"]):
-            try:
-                print("{} -> {}".format(sp,
-                                        self._mapping["destination-path"][k]))
-                self.dirmap_routine(sp,
-                                    self._mapping["destination-path"][k])
-            except IndexError:
-                # missing corresponding destination path
-                log.error(("invalid dirmap mapping, missing corresponding"
-                           " destination directory."))
-                break
-            except RuntimeError:
-                log.error("invalid path {} -> {}, mapping not registered".format(  # noqa: E501
-                    sp, self._mapping["destination-path"][k]
-                ))
-                continue
-
-    def get_mappings(self, project_settings):
-        """Get translation from source-path to destination-path.
-
-            It checks if Site Sync is enabled and user chose to use local
-            site, in that case configuration in Local Settings takes precedence
-        """
-        local_mapping = self._get_local_sync_dirmap(project_settings)
-        dirmap_label = "{}-dirmap".format(self.host_name)
-        if not self.project_settings[self.host_name].get(dirmap_label) and \
-                not local_mapping:
-            return []
-        mapping = local_mapping or \
-            self.project_settings[self.host_name][dirmap_label]["paths"] or {}
-        enbled = self.project_settings[self.host_name][dirmap_label]["enabled"]
-        mapping_enabled = enbled or bool(local_mapping)
-
-        if not mapping or not mapping_enabled or \
-                not mapping.get("destination-path") or \
-                not mapping.get("source-path"):
-            return []
-        return mapping
-
-    def _get_local_sync_dirmap(self, project_settings):
-        """
-            Returns dirmap if synch to local project is enabled.
-
-            Only valid mapping is from roots of remote site to local site set
-            in Local Settings.
-
-            Args:
-                project_settings (dict)
-            Returns:
-                dict : { "source-path": [XXX], "destination-path": [YYYY]}
-        """
-        import json
-        mapping = {}
-
-        if not project_settings["global"]["sync_server"]["enabled"]:
-            return mapping
-
-        from openpype.settings.lib import get_site_local_overrides
-
-        if not self.sync_module:
-            from openpype.modules import ModulesManager
-            manager = ModulesManager()
-            self.sync_module = manager.modules_by_name["sync_server"]
-
-        project_name = os.getenv("AVALON_PROJECT")
-
-        active_site = self.sync_module.get_local_normalized_site(
-            self.sync_module.get_active_site(project_name))
-        remote_site = self.sync_module.get_local_normalized_site(
-            self.sync_module.get_remote_site(project_name))
-        log.debug("active {} - remote {}".format(active_site, remote_site))
-
-        if active_site == "local" \
-                and project_name in self.sync_module.get_enabled_projects()\
-                and active_site != remote_site:
-
-            sync_settings = self.sync_module.get_sync_project_setting(
-                os.getenv("AVALON_PROJECT"), exclude_locals=False,
-                cached=False)
-
-            active_overrides = get_site_local_overrides(
-                os.getenv("AVALON_PROJECT"), active_site)
-            remote_overrides = get_site_local_overrides(
-                os.getenv("AVALON_PROJECT"), remote_site)
-
-            log.debug("local overrides".format(active_overrides))
-            log.debug("remote overrides".format(remote_overrides))
-            for root_name, active_site_dir in active_overrides.items():
-                remote_site_dir = remote_overrides.get(root_name) or\
-                    sync_settings["sites"][remote_site]["root"][root_name]
-                if os.path.isdir(active_site_dir):
-                    if not mapping.get("destination-path"):
-                        mapping["destination-path"] = []
-                    mapping["destination-path"].append(active_site_dir)
-
-                    if not mapping.get("source-path"):
-                        mapping["source-path"] = []
-                    mapping["source-path"].append(remote_site_dir)
-
-            log.debug("local sync mapping:: {}".format(mapping))
-        return mapping

@@ -10,19 +10,19 @@ from openpype.client import (
     get_versions,
     get_representations
 )
-from openpype.pipeline import Anatomy
 from openpype_modules.ftrack.lib import BaseAction, statics_icon
 from openpype_modules.ftrack.lib.avalon_sync import CUST_ATTR_ID_KEY
 from openpype_modules.ftrack.lib.custom_attributes import (
     query_custom_attributes
 )
 from openpype.lib.dateutils import get_datetime_data
-from openpype.lib.delivery import (
-    path_from_representation,
+from openpype.pipeline import Anatomy
+from openpype.pipeline.load import get_representation_path_with_anatomy
+from openpype.pipeline.delivery import (
     get_format_dict,
     check_destination_path,
-    process_single_file,
-    process_sequence
+    deliver_single_file,
+    deliver_sequence,
 )
 
 
@@ -586,7 +586,7 @@ class Delivery(BaseAction):
             if frame:
                 repre["context"]["frame"] = len(str(frame)) * "#"
 
-            repre_path = path_from_representation(repre, anatomy)
+            repre_path = get_representation_path_with_anatomy(repre, anatomy)
             # TODO add backup solution where root of path from component
             # is replaced with root
             args = (
@@ -600,9 +600,9 @@ class Delivery(BaseAction):
                 self.log
             )
             if not frame:
-                process_single_file(*args)
+                deliver_single_file(*args)
             else:
-                process_sequence(*args)
+                deliver_sequence(*args)
 
         return self.report(report_items)
 
