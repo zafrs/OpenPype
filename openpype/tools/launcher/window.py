@@ -340,7 +340,7 @@ class LauncherWindow(QtWidgets.QDialog):
         asset_panel.back_clicked.connect(self.on_back_clicked)
         asset_panel.session_changed.connect(self.on_session_changed)
 
-        self.resize(650, 805)
+        self.resize(665, 805)
 
         self._page = 0
 
