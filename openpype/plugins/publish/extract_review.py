@@ -10,12 +10,13 @@ import six
 import clique
 
 import pyblish.api
-import openpype.api
+
 from openpype.lib import (
     get_ffmpeg_tool_path,
     get_ffprobe_streams,
 
     path_to_subprocess_arg,
+    run_subprocess,
 
     should_convert_for_ffmpeg,
     convert_input_paths_for_ffmpeg,
@@ -354,9 +355,7 @@ class ExtractReview(pyblish.api.InstancePlugin):
             # run subprocess
             self.log.debug("Executing: {}".format(subprcs_cmd))
 
-            openpype.api.run_subprocess(
-                subprcs_cmd, shell=True, logger=self.log
-            )
+            run_subprocess(subprcs_cmd, shell=True, logger=self.log)
 
             # delete files added to fill gaps
             if files_to_clean:
@@ -1731,38 +1730,33 @@ class ExtractReview(pyblish.api.InstancePlugin):
         Returns:
             list: Containg all output definitions matching entered tags.
         """
+
         filtered_outputs = []
         repre_c_tags_low = [tag.lower() for tag in (custom_tags or [])]
         for output_def in outputs:
-            valid = False
             tag_filters = output_def.get("filter", {}).get("custom_tags")
 
-            if (
-                # if any of tag filter is empty, skip
-                custom_tags and not tag_filters
-                or not custom_tags and tag_filters
-            ):
-                continue
-            elif not custom_tags and not tag_filters:
+            if not custom_tags and not tag_filters:
+                # Definition is valid if both tags are empty
                 valid = True
 
-            # lower all filter tags
-            tag_filters_low = [tag.lower() for tag in tag_filters]
+            elif not custom_tags or not tag_filters:
+                # Invalid if one is empty
+                valid = False
 
-            self.log.debug("__ tag_filters: {}".format(tag_filters))
-            self.log.debug("__ repre_c_tags_low: {}".format(
-                repre_c_tags_low))
+            else:
+                # Check if output definition tags are in representation tags
+                valid = False
+                # lower all filter tags
+                tag_filters_low = [tag.lower() for tag in tag_filters]
+                # check if any repre tag is not in filter tags
+                for tag in repre_c_tags_low:
+                    if tag in tag_filters_low:
+                        valid = True
+                        break
 
-            # check if any repre tag is not in filter tags
-            for tag in repre_c_tags_low:
-                if tag in tag_filters_low:
-                    valid = True
-                    break
-
-            if not valid:
-                continue
-
-            filtered_outputs.append(output_def)
+            if valid:
+                filtered_outputs.append(output_def)
 
         self.log.debug("__ filtered_outputs: {}".format(
             [_o["filename_suffix"] for _o in filtered_outputs]
