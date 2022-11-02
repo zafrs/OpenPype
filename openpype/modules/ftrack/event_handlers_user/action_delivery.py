@@ -2,6 +2,8 @@ import os
 import copy
 import json
 import collections
+import traceback
+
 
 from openpype.client import (
     get_project,
@@ -567,7 +569,12 @@ class Delivery(BaseAction):
 
             #===================================================================
             # fill custom deliveryName to Client purpose
-            anatomy_data = self.fill_deliveryName( session, anatomy_data)
+            try : 
+                from Acacia.Modules.Ftrack.Lib import api
+
+                anatomy_data = api.fill_custom_attributes(self.log, session, anatomy_data)
+            except :
+                traceback.print_exc()
             #===================================================================
 
             repre_report_items = check_destination_path(repre["_id"],
@@ -643,30 +650,6 @@ class Delivery(BaseAction):
             "title": "Delivery report",
             "success": False
         }
-
-    def fill_deliveryName( self, session, anatomy_data ):
-        asset = anatomy_data['asset']
-        project_name = anatomy_data['project']['name']
-
-        query = (
-            'Shot where name is "{}"'
-            ' and project.full_name is "{}"'
-        ).format(asset, project_name )
-
-        shot_entity = session.query(query).first()
-        delivery_name = shot_entity['custom_attributes']['deliveryName']
-        camera_name = shot_entity['custom_attributes']['cameraName']
-
-        if delivery_name :
-            delivery_name = delivery_name.strip()
-            camera_name = camera_name.strip()
-            anatomy_data.update( {"deliveryName": delivery_name })
-            anatomy_data.update( {"cameraName": camera_name })
-        else :
-            pass
-
-        return anatomy_data
-
 
 def register(session):
     '''Register plugin. Called when used as an plugin.'''
