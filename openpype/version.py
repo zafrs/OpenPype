@@ -1,8 +1,13 @@
+
 # -*- coding: utf-8 -*-
 """Package declaring Pype version."""
-__version__ = "3.14.2-Lumine220915"
+__version__ = "3.14.8-Lumine221211"
 
 # History Branch
+
+# 26 Oct 2022
+# add 0081a03b7610f15cc3812fe7f5c8b55ab50766e0 
+# resize launcher
 
 # 04 August 2022
 # add ac8e64e1bc8f37bac2a77caa04312dc539d61086 create new version Lumine-version/3.12.2-Lumine220805
