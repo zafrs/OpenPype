@@ -1,9 +1,13 @@
 
 # -*- coding: utf-8 -*-
 """Package declaring Pype version."""
-__version__ = "3.14.9-Lumine221217"
+__version__ = "3.14.9-Lumine221220"
 
 # History Branch
+
+# 20 Dec 2022
+# add a642caeee4b487e31cd4f69c654afb75777a0b9e
+# action delviery and hiero shortcut
 
 # 26 Oct 2022
 # add 0081a03b7610f15cc3812fe7f5c8b55ab50766e0 
