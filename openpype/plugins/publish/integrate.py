@@ -132,7 +132,8 @@ class IntegrateAsset(pyblish.api.InstancePlugin):
                 "mvUsdComposition",
                 "mvUsdOverride",
                 "simpleUnrealTexture",
-                "online"
+                "online",
+                "reference"
                 ]
 
     default_template_name = "publish"
