@@ -1,9 +1,17 @@
 
 # -*- coding: utf-8 -*-
 """Package declaring Pype version."""
-__version__ = "3.14.9-Lumine221220"
+__version__ = "3.14.9-Lumine221226"
 
 # History Branch
+
+# 26 Dec 2022
+# add 30914265b16ada6e82cf4a07233f186e9ec22c39
+# fix typo for color update
+
+# 22 Dec 2022
+# add f14aeb59ff4eabbaa8b9d6534904a8247190de4e
+# add reference family for integrate file
 
 # 20 Dec 2022
 # add a642caeee4b487e31cd4f69c654afb75777a0b9e
