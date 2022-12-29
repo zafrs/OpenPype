@@ -864,7 +864,7 @@ def _bootstrap_from_code(use_version, use_staging):
         os.environ["OPENPYPE_VERSION"] = use_version
         version_path = version_to_use.path
         os.environ["OPENPYPE_REPOS_ROOT"] = (
-            version_path / "openpype"
+            version_path
         ).as_posix()
         _openpype_root = version_to_use.path.as_posix()
 
