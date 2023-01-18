@@ -185,7 +185,7 @@ class ReferenceLoader(openpype.hosts.maya.api.plugin.ReferenceLoader):
         self.log.info("Creating subset: {}".format(namespace))
 
         # Create the animation instance
-        creator_plugin = get_creator_by_name(self.cameraRig_creator_name)
+        creator_plugin = get_legacy_creator_by_name(self.cameraRig_creator_name)
         with maintained_selection():
             cmds.select(camera, noExpand=True)
             legacy_create(

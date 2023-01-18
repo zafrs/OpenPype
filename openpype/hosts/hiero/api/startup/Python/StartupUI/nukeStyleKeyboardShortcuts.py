@@ -32,3 +32,8 @@ a = hiero.ui.findMenuAction("Monitor Output")
 if a:
     a.setShortcut(QKeySequence('Ctrl+U'))
 #----------------------------------------------
+a = hiero.ui.findMenuAction("Publish...")
+a.setShortcut(QKeySequence("Ctrl+Shift+P"))
+#----------------------------------------------
+a = hiero.ui.findMenuAction("Create...")
+a.setShortcut(QKeySequence("Ctrl+Shift+X"))
