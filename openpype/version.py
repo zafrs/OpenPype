@@ -1,9 +1,29 @@
 
 # -*- coding: utf-8 -*-
 """Package declaring Pype version."""
-__version__ = "3.14.9-Lumine230109"
+__version__ = "3.14.9-Lumine230118"
 
 # History Branch
+
+# 18 Jan 2023
+# add 3a99ffae58ee2a55e4250f0f12283033ac18b0cb
+# Create new plugin creator
+
+# 9 jan 2023
+# add b5e0a03502839f74748389c0c542e839ed0a0a28
+# create new version 3.14.9-Lumine230109
+
+# 9 Jan 2023 
+# add 0b459e727e8af45812887243677ae0c0f19e5dda
+# Ftrack & web server update module
+
+# 29 Dec 2022
+# add a2436f1d0fa89c052ca71c655260d5d1d91a3009
+# remove `openpype` path from dev staging
+
+# 28 Dec 2022
+# add 30850dc91b297ed5265faa9aed37d4b67de93877
+# Maya : fix load camera rig with instances
 
 # 26 Dec 2022
 # add 30914265b16ada6e82cf4a07233f186e9ec22c39
