@@ -78,6 +78,19 @@ class WebServerModule(OpenPypeModule, ITrayService):
             self.webserver_url, static_prefix
         )
 
+        acacia = os.getenv("ACACIA")
+        if acacia and os.path.exists(acacia) :
+            static_lumine_prefix = "/res_lumine"
+
+            self.server_manager.add_static( static_lumine_prefix, 
+                os.path.join( acacia, "Resources/Images/ftrack"))
+
+            os.environ["LUMINE_STATICS_SERVER"] = "{}{}".format(
+                self.webserver_url, static_lumine_prefix
+            )
+            
+            
+
     def _add_listeners(self):
         from openpype_modules.webserver import host_console_listener
 
