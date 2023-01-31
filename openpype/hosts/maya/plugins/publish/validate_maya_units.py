@@ -43,7 +43,7 @@ class ValidateMayaUnits(pyblish.api.ContextPlugin):
             str(fps)).as_tuple()[2])
 
         asset_doc = context.data["assetEntity"]
-        asset_fps = asset_doc["data"]["fps"]
+        asset_fps = round(asset_doc["data"]["fps"], 3)
         # get asset fps decimal places
         asset_fps_decimal_places = abs(decimal.Decimal(
             str(asset_fps)).as_tuple()[2])
@@ -52,13 +52,13 @@ class ValidateMayaUnits(pyblish.api.ContextPlugin):
         # normalize number of decimal places base on the number with
         # less precision.
         if asset_fps_decimal_places > fps_decimal_places:
-            asset_fps = float_round(asset_fps, fps_decimal_places, ceil)
+            asset_fps = round(asset_fps, 3)
         elif asset_fps_decimal_places < fps_decimal_places:
-            fps = float_round(fps, asset_fps_decimal_places, ceil)
+            fps = round(fps, 2)
 
         self.log.info('Units (linear): {0}'.format(linear_units))
         self.log.info('Units (angular): {0}'.format(angular_units))
-        self.log.info('Units (time): {0} FPS'.format(context.data.get('fps')))
+        self.log.info('Units (time): {0} FPS'.format(fps))
 
         valid = True
 
@@ -84,8 +84,8 @@ class ValidateMayaUnits(pyblish.api.ContextPlugin):
         if self.validate_fps and fps and fps != asset_fps:
             self.log.error(
                 "Scene must be {} FPS (now is {})".format(
-                    asset_doc["data"]["fps"],
-                    context.data.get('fps')))
+                    asset_fps,
+                    fps))
             valid = False
 
         if not valid:
