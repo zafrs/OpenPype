@@ -2098,6 +2098,9 @@ def set_scene_fps(fps, update=True):
     dec, ipart = math.modf(fps)
     if dec == 0.0:
         fps = int(ipart)
+    
+    elif dec > 0.000 :
+        fps = round(float(fps), 3)
 
     unit = fps_mapping.get(str(fps), None)
     if unit is None:

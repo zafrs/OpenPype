@@ -60,6 +60,8 @@ def edit_shader_definitions():
 def reset_frame_range():
     """Set frame range to current asset"""
     # Set FPS first
+    current_fps = legacy_io.Session.get("AVALON_FPS", 25)
+    
     fps = {15: 'game',
            24: 'film',
            25: 'pal',
@@ -75,7 +77,7 @@ def reset_frame_range():
            59.94: '59.94fps',
            44100: '44100fps',
            48000: '48000fps'
-           }.get(float(legacy_io.Session.get("AVALON_FPS", 25)), "pal")
+           }.get(round(float(current_fps),3), "pal")
 
     cmds.currentUnit(time=fps)
 
