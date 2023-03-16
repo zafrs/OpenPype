@@ -1,7 +1,7 @@
 
 # -*- coding: utf-8 -*-
 """Package declaring Pype version."""
-__version__ = "3.14.10-Lumine230131"
+__version__ = "3.14.10-Lumine230316"
 
 # History Branch
 
@@ -21,7 +21,7 @@ __version__ = "3.14.10-Lumine230131"
 # add b5e0a03502839f74748389c0c542e839ed0a0a28
 # create new version 3.14.9-Lumine230109
 
-# 9 Jan 2023 
+# 9 Jan 2023
 # add 0b459e727e8af45812887243677ae0c0f19e5dda
 # Ftrack & web server update module
 
@@ -46,7 +46,7 @@ __version__ = "3.14.10-Lumine230131"
 # action delviery and hiero shortcut
 
 # 26 Oct 2022
-# add 0081a03b7610f15cc3812fe7f5c8b55ab50766e0 
+# add 0081a03b7610f15cc3812fe7f5c8b55ab50766e0
 # resize launcher
 
 # 04 August 2022
@@ -58,7 +58,7 @@ __version__ = "3.14.10-Lumine230131"
 # modfy launcher icon
 
 # 02 August 2022
-# add a8c5fb3f4b85b17b2d9345de551e0f7022ce7e00 
+# add a8c5fb3f4b85b17b2d9345de551e0f7022ce7e00
 # create new version ( delivery feature )
 
 # 26 july 2022
@@ -88,12 +88,12 @@ __version__ = "3.14.10-Lumine230131"
 # add more extenstion Davinci at 13c151c03c83e73498eddd81684394ea44266e60
 
 # 06 june 2022
-# Merge remote-tracking branch 'pypeclub/bugfix/site_sync_start_speedup' into Lumine-version/3.10.0-Lumine270521 at 
+# Merge remote-tracking branch 'pypeclub/bugfix/site_sync_start_speedup' into Lumine-version/3.10.0-Lumine270521 at
 
 # 22 may 2022
 # create new version for production from https://github.com/zafrs/OpenPype/tree/Lumine-version/3.9.8-Lumine220521 at 897f356441424eb85811becaca2c6f56d6bf1e9
 
-# 21 may 2022 
+# 21 may 2022
 # add more extension for widget_drop_frame.py at f5db5ac7c9a2dfb7697b31fc6d317156c4a4aab9
 
 # 19 may 2022
@@ -116,11 +116,11 @@ __version__ = "3.14.10-Lumine230131"
 # added https://github.com/zafrs/OpenPype/tree/Lumine-version/3.9.0-Lumine220310-2 at ee9bddac8aed04484751261802bc8df408d72dbd
 
 # 11 mar 2022
-# added https://github.com/zafrs/OpenPype/tree/openpype-lumine and create branch at eb6b82dc7e35f5254d9541bcc8ed2c5ed3788979 
+# added https://github.com/zafrs/OpenPype/tree/openpype-lumine and create branch at eb6b82dc7e35f5254d9541bcc8ed2c5ed3788979
 
 # 01 mar 2022
 # added https://github.com/zafrs/OpenPype/tree/openpype-lumine at 98234d9821ca47c9e16a436a5ceaeb4eb21aa064
-# added PR ( cherry pick ) https://github.com/pypeclub/OpenPype/pull/2822/files at 863753705680abde97b6f0795521dd8cdfa527ba 
+# added PR ( cherry pick ) https://github.com/pypeclub/OpenPype/pull/2822/files at 863753705680abde97b6f0795521dd8cdfa527ba
 
 # 24 feb 2022
 # added https://github.com/zafrs/OpenPype/tree/Lumine-version/3.9.0-Lumine220221-1 at 1c0d01bce29977c2852ca3a94c71645010bd8b99
@@ -128,10 +128,10 @@ __version__ = "3.14.10-Lumine230131"
 # 21 feb 2022
 # merge with main and create 3.9.0-Lumine220221-1 2b49368cec0c92614e0d4efa319daa3611e9aacc
 
-# 16 Feb 
+# 16 Feb
 # merge main to openpype-lumine at 20228bab9b5b0424f675d291bd25d8c4176ede7db160
 
-# 14 feb 2022 
+# 14 feb 2022
 # added and create version 3.9.0-Lumine220214-1 https://github.com/zafrs/OpenPype/tree/openpype-lumine at 5e1da0e3ff7028011d4554a3e5f3fe15865c49d5
 # added feature dropbox at 97c8e17fafd680ed07a8c2cd37fe660ab98d3e4d
 # merge with develop at c64f8be0143d4d50ccb7eb9c94545704836db391
