@@ -5,6 +5,14 @@ __version__ = "3.14.10-Lumine230316"
 
 # History Branch
 
+# 3 Mar 2023
+# add 621094341509c4a456e8535dcd55c4f16b468d2c
+# up version : Lumine-version/3.14.10-Lumine230118
+
+# 31 Jan 2023
+# add fcf3bfc00cc35a90633726ec5c21da2f64ccce53
+# Cherry Pick : bugfix/OP-4679_Issue-Comment
+
 # 31 Jan 2023
 # add 9efbfef1073f3dab96179ad10f7d3d8c5eb6fd5c
 # FPS handling on Maya and Houdini
