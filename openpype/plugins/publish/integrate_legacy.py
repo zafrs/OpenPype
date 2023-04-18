@@ -76,10 +76,12 @@ class IntegrateAssetNew(pyblish.api.InstancePlugin):
     order = pyblish.api.IntegratorOrder + 0.00001
     families = ["workfile",
                 "pointcache",
+                "pointcloud",
                 "proxyAbc",
                 "camera",
                 "animation",
                 "model",
+                "maxScene",
                 "mayaAscii",
                 "mayaScene",
                 "setdress",
@@ -988,7 +990,7 @@ class IntegrateAssetNew(pyblish.api.InstancePlugin):
 
         # Include optional data if present in
         optionals = [
-            "frameStart", "frameEnd", "step", "handles",
+            "frameStart", "frameEnd", "step",
             "handleEnd", "handleStart", "sourceHashes"
         ]
         for key in optionals:

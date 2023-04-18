@@ -1,7 +1,7 @@
 
 # -*- coding: utf-8 -*-
 """Package declaring Pype version."""
-__version__ = "3.15.0-Lumine230131"
+__version__ = "3.15.4-Lumine230418"
 
 # History Branch
 

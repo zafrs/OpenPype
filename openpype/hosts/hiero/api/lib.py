@@ -1227,7 +1227,7 @@ def set_track_color(track_item, color):
 
 def check_inventory_versions(track_items=None):
     """
-    Actual version color idetifier of Loaded containers
+    Actual version color identifier of Loaded containers
 
     Check all track items and filter only
     Loader nodes for its version. It will get all versions from database

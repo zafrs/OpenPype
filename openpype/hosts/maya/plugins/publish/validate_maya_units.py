@@ -3,17 +3,11 @@ import maya.cmds as cmds
 import pyblish.api
 
 import openpype.hosts.maya.api.lib as mayalib
-from math import ceil
-import decimal
-
+from openpype.pipeline.context_tools import get_current_project_asset
 from openpype.pipeline.publish import (
     RepairContextAction,
     ValidateSceneOrder,
 )
-
-
-def float_round(num, places=0, direction=ceil):
-    return direction(num * (10**places)) / float(10**places)
 
 
 class ValidateMayaUnits(pyblish.api.ContextPlugin):
@@ -35,18 +29,14 @@ class ValidateMayaUnits(pyblish.api.ContextPlugin):
     def process(self, context):
 
         # Collected units
-        linear_units = context.data.get('linearUnits')
-        angular_units = context.data.get('angularUnits')
-        fps = context.data.get('fps')
-        # get number of decimal places on fps
-        fps_decimal_places = abs(decimal.Decimal(
-            str(fps)).as_tuple()[2])
+        linearunits = context.data.get('linearUnits')
+        angularunits = context.data.get('angularUnits')
 
-        asset_doc = context.data["assetEntity"]
-        asset_fps = round(asset_doc["data"]["fps"], 3)
-        # get asset fps decimal places
-        asset_fps_decimal_places = abs(decimal.Decimal(
-            str(asset_fps)).as_tuple()[2])
+        fps = context.data.get('fps')
+
+        # TODO replace query with using 'context.data["assetEntity"]'
+        asset_doc = get_current_project_asset()
+        asset_fps = mayalib.convert_to_maya_fps(asset_doc["data"]["fps"])
 
         # compare only the same number of decimal places
         # normalize number of decimal places base on the number with
@@ -106,7 +96,8 @@ class ValidateMayaUnits(pyblish.api.ContextPlugin):
         cls.log.debug(current_linear)
 
         cls.log.info("Setting time unit to match project")
-        asset_doc = context.data["assetEntity"]
+        # TODO replace query with using 'context.data["assetEntity"]'
+        asset_doc = get_current_project_asset()
         asset_fps = asset_doc["data"]["fps"]
         asset_fps = float_round(asset_fps, 2, ceil)
         mayalib.set_scene_fps(asset_fps)
