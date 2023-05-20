@@ -1,9 +1,17 @@
 
 # -*- coding: utf-8 -*-
 """Package declaring Pype version."""
-__version__ = "3.14.10-Lumine230118-develop"
+__version__ = "3.15.7-Lumine230520"
 
 # History Branch
+
+# 31 Jan 2023
+# add 9efbfef1073f3dab96179ad10f7d3d8c5eb6fd5c
+# FPS handling on Maya and Houdini
+
+# 20 Jan 2023
+# add fec98296c09d47140e51914ef34726ce4b97fbe3
+# remove color clip at hiero
 
 # 18 Jan 2023
 # add 3a99ffae58ee2a55e4250f0f12283033ac18b0cb

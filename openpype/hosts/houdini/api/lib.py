@@ -23,7 +23,17 @@ JSON_PREFIX = "JSON:::"
 
 def get_asset_fps():
     """Return current asset fps."""
-    return get_current_project_asset()["data"].get("fps")
+    current_fps = get_current_project_asset()["data"].get("fps")
+
+    fps = {23.98: '23.976',
+           23.976: '23.976',
+           29.97: '29.97',
+           47.952: '47.952',
+           47.95: '47.952',
+           59.94: '59.94',
+           }.get(round(float(current_fps),3), current_fps)
+
+    return float(fps)
 
 
 def set_id(node, unique_id, overwrite=False):
@@ -127,6 +137,8 @@ def get_output_parameter(node):
         return node.parm("filename")
     elif node_type == "comp":
         return node.parm("copoutput")
+    elif node_type == "opengl":
+        return node.parm("picture")
     elif node_type == "arnold":
         if node.evalParm("ar_ass_export_enable"):
             return node.parm("ar_ass_file")
@@ -471,6 +483,9 @@ def maintained_selection():
 def reset_framerange():
     """Set frame range to current asset"""
 
+    fps = get_asset_fps()
+    set_scene_fps(fps)
+
     project_name = legacy_io.active_project()
     asset_name = legacy_io.Session["AVALON_ASSET"]
     # Get the asset ID from the database for the asset of current context
@@ -479,23 +494,13 @@ def reset_framerange():
 
     frame_start = asset_data.get("frameStart")
     frame_end = asset_data.get("frameEnd")
-    # Backwards compatibility
-    if frame_start is None or frame_end is None:
-        frame_start = asset_data.get("edit_in")
-        frame_end = asset_data.get("edit_out")
 
     if frame_start is None or frame_end is None:
         log.warning("No edit information found for %s" % asset_name)
         return
 
-    handles = asset_data.get("handles") or 0
-    handle_start = asset_data.get("handleStart")
-    if handle_start is None:
-        handle_start = handles
-
-    handle_end = asset_data.get("handleEnd")
-    if handle_end is None:
-        handle_end = handles
+    handle_start = asset_data.get("handleStart", 0)
+    handle_end = asset_data.get("handleEnd", 0)
 
     frame_start -= int(handle_start)
     frame_end += int(handle_end)

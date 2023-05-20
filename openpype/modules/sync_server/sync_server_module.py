@@ -3,7 +3,6 @@ import sys
 import time
 from datetime import datetime
 import threading
-import platform
 import copy
 import signal
 from collections import deque, defaultdict
@@ -25,7 +24,11 @@ from openpype.lib import Logger, get_local_site_id
 from openpype.pipeline import AvalonMongoDB, Anatomy
 from openpype.settings.lib import (
     get_default_anatomy_settings,
-    get_anatomy_settings
+    get_anatomy_settings,
+    get_local_settings,
+)
+from openpype.settings.constants import (
+    DEFAULT_PROJECT_KEY
 )
 
 from .providers.local_drive import LocalDriveHandler
@@ -639,6 +642,110 @@ class SyncServerModule(OpenPypeModule, ITrayModule):
             return get_local_site_id()
         return active_site
 
+    def get_active_site_type(self, project_name, local_settings=None):
+        """Active site which is defined by artist.
+
+        Unlike 'get_active_site' is this method also checking local settings
+        where might be different active site set by user. The output is limited
+        to "studio" and "local".
+
+        This method is used by Anatomy when is decided which
+
+        Todos:
+            Check if sync server is enabled for the project.
+            - To be able to do that the sync settings MUST NOT be cached for
+                all projects at once. The sync settings preparation for all
+                projects is reasonable only in sync server loop.
+
+        Args:
+            project_name (str): Name of project where to look for active site.
+            local_settings (Optional[dict[str, Any]]): Prepared local settings.
+
+        Returns:
+            Literal["studio", "local"]: Active site.
+        """
+
+        if not self.enabled:
+            return "studio"
+
+        if local_settings is None:
+            local_settings = get_local_settings()
+
+        local_project_settings = local_settings.get("projects")
+        project_settings = get_project_settings(project_name)
+        sync_server_settings = project_settings["global"]["sync_server"]
+        if not sync_server_settings["enabled"]:
+            return "studio"
+
+        project_active_site = sync_server_settings["config"]["active_site"]
+        if not local_project_settings:
+            return project_active_site
+
+        project_locals = local_project_settings.get(project_name) or {}
+        default_locals = local_project_settings.get(DEFAULT_PROJECT_KEY) or {}
+        active_site = (
+            project_locals.get("active_site")
+            or default_locals.get("active_site")
+        )
+        if active_site:
+            return active_site
+        return project_active_site
+
+    def get_site_root_overrides(
+        self, project_name, site_name, local_settings=None
+    ):
+        """Get root overrides for project on a site.
+
+        Implemented to be used in 'Anatomy' for other than 'studio' site.
+
+        Args:
+            project_name (str): Project for which root overrides should be
+                received.
+            site_name (str): Name of site for which should be received roots.
+            local_settings (Optional[dict[str, Any]]): Prepare local settigns
+                values.
+
+        Returns:
+            Union[dict[str, Any], None]: Root overrides for this machine.
+        """
+
+        # Validate that site name is valid
+        if site_name not in ("studio", "local"):
+            # Considure local site id as 'local'
+            if site_name != get_local_site_id():
+                raise ValueError((
+                    "Root overrides are available only for"
+                    " default sites not for \"{}\""
+                ).format(site_name))
+            site_name = "local"
+
+        if local_settings is None:
+            local_settings = get_local_settings()
+
+        if not local_settings:
+            return
+
+        local_project_settings = local_settings.get("projects") or {}
+
+        # Check for roots existence in local settings first
+        roots_project_locals = (
+            local_project_settings
+            .get(project_name, {})
+        )
+        roots_default_locals = (
+            local_project_settings
+            .get(DEFAULT_PROJECT_KEY, {})
+        )
+
+        # Skip rest of processing if roots are not set
+        if not roots_project_locals and not roots_default_locals:
+            return
+
+        # Combine roots from local settings
+        roots_locals = roots_default_locals.get(site_name) or {}
+        roots_locals.update(roots_project_locals.get(site_name) or {})
+        return roots_locals
+
     # remote sites
     def get_remote_sites(self, project_name):
         """
@@ -730,6 +837,18 @@ class SyncServerModule(OpenPypeModule, ITrayModule):
                 get_local_settings_schema()
 
         return ret_dict
+
+    def get_launch_hook_paths(self):
+        """Implementation for applications launch hooks.
+
+        Returns:
+            (str): full absolut path to directory with hooks for the module
+        """
+
+        return os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            "launch_hooks"
+        )
 
     # Needs to be refactored after Settings are updated
     # # Methods for Settings to get appriate values to fill forms
@@ -938,9 +1057,23 @@ class SyncServerModule(OpenPypeModule, ITrayModule):
             self.sync_server_thread.reset_timer()
 
     def is_representation_on_site(
-        self, project_name, representation_id, site_name
+        self, project_name, representation_id, site_name, max_retries=None
     ):
-        """Checks if 'representation_id' has all files avail. on 'site_name'"""
+        """Checks if 'representation_id' has all files avail. on 'site_name'
+
+        Args:
+            project_name (str)
+            representation_id (str)
+            site_name (str)
+            max_retries (int) (optional) - provide only if method used in while
+                loop to bail out
+        Returns:
+            (bool): True if 'representation_id' has all files correctly on the
+            'site_name'
+        Raises:
+              (ValueError)  Only If 'max_retries' provided if upload/download
+        failed too many times to limit infinite loop check.
+        """
         representation = get_representation_by_id(project_name,
                                                   representation_id,
                                                   fields=["_id", "files"])
@@ -952,6 +1085,11 @@ class SyncServerModule(OpenPypeModule, ITrayModule):
             for site in file_info.get("sites", []):
                 if site["name"] != site_name:
                     continue
+
+                if max_retries:
+                    tries = self._get_tries_count_from_rec(site)
+                    if tries >= max_retries:
+                        raise ValueError("Failed too many times")
 
                 if (site.get("progress") or site.get("error") or
                         not site.get("created_dt")):
@@ -1365,13 +1503,15 @@ class SyncServerModule(OpenPypeModule, ITrayModule):
 
         return sync_settings
 
-    def get_all_site_configs(self, project_name=None):
+    def get_all_site_configs(self, project_name=None,
+                             local_editable_only=False):
         """
             Returns (dict) with all sites configured system wide.
 
             Args:
                 project_name (str)(optional): if present, check if not disabled
-
+                local_editable_only (bool)(opt): if True return only Local
+                    Setting configurable (for LS UI)
             Returns:
                 (dict): {'studio': {'provider':'local_drive'...},
                          'MY_LOCAL': {'provider':....}}
@@ -1392,9 +1532,21 @@ class SyncServerModule(OpenPypeModule, ITrayModule):
                     if site_settings:
                         detail.update(site_settings)
                 system_sites[site] = detail
-
         system_sites.update(self._get_default_site_configs(sync_enabled,
                                                            project_name))
+        if local_editable_only:
+            local_schema = SyncServerModule.get_local_settings_schema()
+            editable_keys = {}
+            for provider_code, editables in local_schema.items():
+                editable_keys[provider_code] = ["enabled", "provider"]
+                for editable_item in editables:
+                    editable_keys[provider_code].append(editable_item["key"])
+
+            for _, site in system_sites.items():
+                provider = site["provider"]
+                for site_config_key in list(site.keys()):
+                    if site_config_key not in editable_keys[provider]:
+                        site.pop(site_config_key, None)
 
         return system_sites
 

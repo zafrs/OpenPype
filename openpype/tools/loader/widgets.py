@@ -5,7 +5,7 @@ import pprint
 import traceback
 import collections
 
-from Qt import QtWidgets, QtCore, QtGui
+from qtpy import QtWidgets, QtCore, QtGui
 
 from openpype.client import (
     get_subset_families,
@@ -36,6 +36,7 @@ from openpype.tools.utils import (
     ErrorMessageBox,
     lib as tools_lib
 )
+from openpype.tools.utils.lib import checkstate_int_to_enum
 from openpype.tools.utils.delegates import (
     VersionDelegate,
     PrettyTimeDelegate
@@ -47,6 +48,12 @@ from openpype.tools.utils.widgets import (
 from openpype.tools.utils.views import (
     TreeViewSpinner,
     DeselectableTreeView
+)
+from openpype.tools.utils.constants import (
+    LOCAL_PROVIDER_ROLE,
+    REMOTE_PROVIDER_ROLE,
+    LOCAL_AVAILABILITY_ROLE,
+    REMOTE_AVAILABILITY_ROLE,
 )
 from openpype.tools.assetlinks.widgets import SimpleLinkView
 
@@ -60,13 +67,6 @@ from .model import (
 )
 from . import lib
 from .delegates import LoadedInSceneDelegate
-
-from openpype.tools.utils.constants import (
-    LOCAL_PROVIDER_ROLE,
-    REMOTE_PROVIDER_ROLE,
-    LOCAL_AVAILABILITY_ROLE,
-    REMOTE_AVAILABILITY_ROLE
-)
 
 
 class OverlayFrame(QtWidgets.QFrame):
@@ -265,8 +265,8 @@ class SubsetWidget(QtWidgets.QWidget):
 
         group_checkbox.stateChanged.connect(self.set_grouping)
 
-        subset_filter.textChanged.connect(proxy.setFilterRegExp)
-        subset_filter.textChanged.connect(view.expandAll)
+        subset_filter.textChanged.connect(self._subset_changed)
+
         model.refreshed.connect(self.refreshed)
 
         self.proxy = proxy
@@ -293,6 +293,13 @@ class SubsetWidget(QtWidgets.QWidget):
         with tools_lib.preserve_selection(tree_view=self.view,
                                           current_index=False):
             self.model.set_grouping(state)
+
+    def _subset_changed(self, text):
+        if hasattr(self.proxy, "setFilterRegExp"):
+            self.proxy.setFilterRegExp(text)
+        else:
+            self.proxy.setFilterRegularExpression(text)
+        self.view.expandAll()
 
     def set_loading_state(self, loading, empty):
         view = self.view
@@ -332,7 +339,7 @@ class SubsetWidget(QtWidgets.QWidget):
         repre_docs = get_representations(
             project_name,
             version_ids=version_ids,
-            fields=["name", "parent"]
+            fields=["name", "parent", "data", "context"]
         )
 
         repre_docs_by_version_id = {
@@ -1062,7 +1069,10 @@ class FamilyListView(QtWidgets.QListView):
         checked_families = []
         for row in range(model.rowCount()):
             index = model.index(row, 0)
-            if index.data(QtCore.Qt.CheckStateRole) == QtCore.Qt.Checked:
+            checked = checkstate_int_to_enum(
+                index.data(QtCore.Qt.CheckStateRole)
+            )
+            if checked == QtCore.Qt.Checked:
                 family = index.data(QtCore.Qt.DisplayRole)
                 checked_families.append(family)
 
@@ -1096,13 +1106,15 @@ class FamilyListView(QtWidgets.QListView):
         self.blockSignals(True)
 
         for index in indexes:
-            index_state = index.data(QtCore.Qt.CheckStateRole)
+            index_state = checkstate_int_to_enum(
+                index.data(QtCore.Qt.CheckStateRole)
+            )
             if index_state == state:
                 continue
 
             new_state = state
             if new_state is None:
-                if index_state == QtCore.Qt.Checked:
+                if index_state in QtCore.Qt.Checked:
                     new_state = QtCore.Qt.Unchecked
                 else:
                     new_state = QtCore.Qt.Checked
@@ -1252,7 +1264,7 @@ class RepresentationWidget(QtWidgets.QWidget):
         repre_docs = list(get_representations(
             project_name,
             representation_ids=repre_ids,
-            fields=["name", "parent"]
+            fields=["name", "parent", "data", "context"]
         ))
 
         version_ids = [
@@ -1468,23 +1480,21 @@ class RepresentationWidget(QtWidgets.QWidget):
         repre_ids = []
         data_by_repre_id = {}
         selected_side = action_representation.get("selected_side")
+        site_name = "{}_site_name".format(selected_side)
 
         is_sync_loader = tools_lib.is_sync_loader(loader)
         for item in items:
-            item_id = item.get("_id")
-            repre_ids.append(item_id)
+            repre_id = item["_id"]
+            repre_ids.append(repre_id)
             if not is_sync_loader:
                 continue
 
-            site_name = "{}_site_name".format(selected_side)
             data_site_name = item.get(site_name)
             if not data_site_name:
                 continue
 
-            data_by_repre_id[item_id] = {
-                "_id": item_id,
-                "site_name": data_site_name,
-                "project_name": self.dbcon.active_project()
+            data_by_repre_id[repre_id] = {
+                "site_name": data_site_name
             }
 
         repre_contexts = get_repres_contexts(repre_ids, self.dbcon)
@@ -1574,8 +1584,8 @@ def _load_representations_by_loader(loader, repre_contexts,
             version_name = version_doc.get("name")
         try:
             if data_by_repre_id:
-                _id = repre_context["representation"]["_id"]
-                data = data_by_repre_id.get(_id)
+                repre_id = repre_context["representation"]["_id"]
+                data = data_by_repre_id.get(repre_id)
                 options.update(data)
             load_with_repre_context(
                 loader,
