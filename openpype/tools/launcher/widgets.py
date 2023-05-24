@@ -175,8 +175,8 @@ class ActionBar(QtWidgets.QWidget):
         view.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         view.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
         view.setWrapping(True)
-        view.setGridSize(QtCore.QSize(70, 75))
-        view.setIconSize(QtCore.QSize(30, 30))
+        view.setGridSize(QtCore.QSize(100, 75))
+        view.setIconSize(QtCore.QSize(40, 40))
         view.setSpacing(0)
         view.setWordWrap(True)
 

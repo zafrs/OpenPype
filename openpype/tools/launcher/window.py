@@ -35,7 +35,7 @@ class ProjectIconView(QtWidgets.QListView):
     IconMode = 0
     ListMode = 1
 
-    def __init__(self, parent=None, mode=ListMode):
+    def __init__(self, parent=None, mode=IconMode):
         super(ProjectIconView, self).__init__(parent=parent)
 
         # Workaround for scrolling being super slow or fast when
@@ -57,8 +57,8 @@ class ProjectIconView(QtWidgets.QListView):
             self.setResizeMode(QtWidgets.QListView.Adjust)
             self.setWrapping(True)
             self.setWordWrap(True)
-            self.setGridSize(QtCore.QSize(151, 90))
-            self.setIconSize(QtCore.QSize(50, 50))
+            self.setGridSize(QtCore.QSize(151, 115))
+            self.setIconSize(QtCore.QSize(70, 70))
             self.setSpacing(0)
             self.setAlternatingRowColors(False)
 
@@ -66,6 +66,21 @@ class ProjectIconView(QtWidgets.QListView):
             self.style().polish(self)
 
             self.verticalScrollBar().setSingleStep(30)
+            self.setContentsMargins( 30,30,30,30)
+
+            self.setStyleSheet("""
+            QListView:item {
+                color: #A9A9A9;
+                padding: 3px;
+            }
+            
+            QListView:item:hover{
+                color: #fff;
+                padding: 0px;
+            }
+            """
+
+            )
 
         elif self.ListMode:
             self.setProperty("mode", "list")
@@ -75,12 +90,27 @@ class ProjectIconView(QtWidgets.QListView):
             self.setResizeMode(QtWidgets.QListView.Adjust)
             self.setWrapping(False)
             self.setWordWrap(False)
-            self.setIconSize(QtCore.QSize(20, 20))
+            self.setIconSize(QtCore.QSize(25, 25))
             self.setGridSize(QtCore.QSize(100, 25))
             self.setSpacing(0)
             self.setAlternatingRowColors(False)
 
             self.verticalScrollBar().setSingleStep(33.33)
+
+
+            self.setStyleSheet("""
+            QListView:item {
+                color: #BEBEBE;
+                padding: 0px;
+            }
+            
+            QListView:item:hover{
+                color: #fff;
+                padding: 0px;
+            }
+            """
+
+            )
 
     def mousePressEvent(self, event):
         if event.button() == QtCore.Qt.RightButton:
@@ -310,7 +340,7 @@ class LauncherWindow(QtWidgets.QDialog):
         asset_panel.back_clicked.connect(self.on_back_clicked)
         asset_panel.session_changed.connect(self.on_session_changed)
 
-        self.resize(520, 740)
+        self.resize(665, 805)
 
         self._page = 0
 
