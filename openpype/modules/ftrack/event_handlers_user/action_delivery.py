@@ -2,6 +2,8 @@ import os
 import copy
 import json
 import collections
+import traceback
+
 
 from openpype.client import (
     get_project,
@@ -564,6 +566,18 @@ class Delivery(BaseAction):
             self.log.debug(debug_msg)
 
             anatomy_data = copy.deepcopy(repre["context"])
+
+            #===================================================================
+            # fill custom deliveryName to Client purpose
+            try : 
+                anatomy_data = self.fill_custom_attributes( 
+                        session, anatomy_data
+                    )
+            except :
+                import traceback
+                traceback.print_exc()
+            #===================================================================
+
             repre_report_items = check_destination_path(repre["_id"],
                                                         anatomy,
                                                         anatomy_data,
@@ -637,7 +651,36 @@ class Delivery(BaseAction):
             "title": "Delivery report",
             "success": False
         }
+        
+    def fill_custom_attributes( self, session, anatomy_data ):
+        asset = anatomy_data['asset']
+        project_name = anatomy_data['project']['name']
 
+        query = (
+            'Shot where name is "{}"'
+            ' and project.full_name is "{}"'
+        ).format( asset, project_name )
+
+        try :
+            entity = session.query(query).first()
+            custom_attribute = entity.get('custom_attributes')
+            if custom_attribute :
+                try :
+                    delivery_name = custom_attribute.get( 'deliveryName' )
+                    camera_name = custom_attribute.get( 'cameraName' )
+                    if delivery_name :
+                        delivery_name = delivery_name.strip()
+                        camera_name = camera_name.strip()
+                        anatomy_data.update( {"deliveryName": delivery_name })
+                        anatomy_data.update( {"cameraName": camera_name })
+                except :
+                    self.log.warning( asset + "Delivery Name/Camera Name Error")
+        except:
+            self.log.warning( "Entities Shot Not Found"
+                            "/Skipp Attributes fill function"
+                            " because asset is AssetBuild" )
+
+        return anatomy_data
 
 def register(session):
     '''Register plugin. Called when used as an plugin.'''
