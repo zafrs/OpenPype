@@ -18,16 +18,17 @@ class DropDataFrame(QtWidgets.QFrame):
         ".jpeg", ".xt", ".jpeg-hdr", ".kra", ".mng", ".miff", ".nrrd",
         ".ora", ".pam", ".pbm", ".pgm", ".ppm", ".pnm", ".pcx", ".pgf",
         ".pictor", ".png", ".psb", ".psp", ".qtvr", ".ras",
-        ".rgbe", ".logluv", ".tiff", ".sgi", ".tga", ".tiff", ".tiff/ep",
+        ".rgbe", ".logluv", ".tiff", ".sgi", ".tga", ".tif", ".tiff/ep",
         ".tiff/it", ".ufo", ".ufp", ".wbmp", ".webp", ".xbm", ".xcf",
-        ".xpm", ".xwd"
+        ".xpm", ".xwd", ".raw", ".arw", ".ARW", ".JPG", ".PNG", ".JPEG", 
+        ".RAW", ".DPX", 
     ]
     video_extensions = [
         ".3g2", ".3gp", ".amv", ".asf", ".avi", ".drc", ".f4a", ".f4b",
         ".f4p", ".f4v", ".flv", ".gif", ".gifv", ".m2v", ".m4p", ".m4v",
         ".mkv", ".mng", ".mov", ".mp2", ".mp4", ".mpe", ".mpeg", ".mpg",
         ".mpv", ".mxf", ".nsv", ".ogg", ".ogv", ".qt", ".rm", ".rmvb",
-        ".roq", ".svi", ".vob", ".webm", ".wmv", ".yuv"
+        ".roq", ".svi", ".vob", ".webm", ".wmv", ".yuv", ".MOV", "MP4", 
     ]
     extensions = {
         "nuke": [".nk"],
