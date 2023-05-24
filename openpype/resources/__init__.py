@@ -63,7 +63,8 @@ def get_openpype_splash_filepath(staging=None):
     if staging:
         splash_file_name = "openpype_splash_staging.png"
     else:
-        splash_file_name = "openpype_splash.png"
+        # splash_file_name = "openpype_splash.png"
+        splash_file_name = "lumine_openpype.png"
     return get_resource("icons", splash_file_name)
 
 
