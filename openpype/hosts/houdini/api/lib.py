@@ -24,7 +24,17 @@ JSON_PREFIX = "JSON:::"
 
 def get_asset_fps():
     """Return current asset fps."""
-    return get_current_project_asset()["data"].get("fps")
+    current_fps = get_current_project_asset()["data"].get("fps")
+
+    fps = {23.98: '23.976',
+           23.976: '23.976',
+           29.97: '29.97',
+           47.952: '47.952',
+           47.95: '47.952',
+           59.94: '59.94',
+           }.get(round(float(current_fps),3), current_fps)
+
+    return float(fps)
 
 
 def set_id(node, unique_id, overwrite=False):
@@ -473,6 +483,9 @@ def maintained_selection():
 
 def reset_framerange():
     """Set frame range to current asset"""
+
+    fps = get_asset_fps()
+    set_scene_fps(fps)
 
     project_name = legacy_io.active_project()
     asset_name = legacy_io.Session["AVALON_ASSET"]

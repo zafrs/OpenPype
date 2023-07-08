@@ -72,11 +72,29 @@ class ExtractYetiCache(publish.Extractor):
         if 'transfers' not in instance.data:
             instance.data['transfers'] = []
 
-        publish_dir = instance.data["publishDir"]
-        for cache_filename in cache_files:
-            src = os.path.join(dirname, cache_filename)
-            dst = os.path.join(publish_dir, os.path.basename(cache_filename))
-            instance.data['transfers'].append([src, dst])
+        #=======================================================================
+        # Modify by Faris Lumine
+        # removing instance data transfer to renaming cache with integrate_new
+
+        # enable comment to revert
+        # publish_dir = instance.data["publishDir"]
+        # for cache_filename in cache_files:
+        #     src = os.path.join(dirname, cache_filename)
+        #     dst = os.path.join(publish_dir, os.path.basename(cache_filename))
+        #     instance.data['transfers'].append([src, dst])
+
+        instance.data["representations"].append(
+            {
+                'name': 'fur_file',
+                'ext': 'fur',
+                'files': cache_files[0] if len(cache_files) == 1 else cache_files,
+                'stagingDir': dirname,
+                'frameStart': int(start_frame),
+                'frameEnd': int(end_frame)
+            }
+        )
+
+        #=======================================================================
 
         instance.data["representations"].append(
             {
