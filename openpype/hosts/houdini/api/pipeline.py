@@ -387,7 +387,7 @@ def _set_context_settings():
 
     # Set new scene fps
     fps = get_asset_fps()
-    print("Setting scene FPS to %i" % fps)
+    print("Setting scene FPS to %s" % str(fps))
     lib.set_scene_fps(fps)
 
     lib.reset_framerange()

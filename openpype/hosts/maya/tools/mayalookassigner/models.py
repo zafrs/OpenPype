@@ -112,7 +112,8 @@ class LookModel(models.TreeModel):
             assets = look_subsets[subset]
 
             # Define nice label without "look" prefix for readability
-            label = subset if not subset.startswith("look") else subset[4:]
+            # label = subset if not subset.startswith("look") else subset[4:]
+            label = subset if not subset.startswith("look_") else subset[5:]
 
             item_node = models.Item()
             item_node["label"] = label

@@ -8,6 +8,12 @@ def statics_icon(*icon_statics_file_parts):
         return None
     return "/".join((statics_server, *icon_statics_file_parts))
 
+def statics_icon_lumine( *icon_statics_file_parts ):
+    statics_lumine_server = os.environ.get( "LUMINE_STATICS_SERVER")
+    if not statics_lumine_server :
+        return None
+    return "/".join((statics_lumine_server, *icon_statics_file_parts))
+
 
 class BaseAction(BaseHandler):
     '''Custom Action base class

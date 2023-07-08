@@ -26,7 +26,7 @@ class CollectWorkfile(pyblish.api.ContextPlugin):
 
         # create instance
         instance = context.create_instance(name=filename)
-        subset = 'workfile' + task.capitalize()
+        subset = 'workfile' + "_" + task
 
         data.update({
             "subset": subset,

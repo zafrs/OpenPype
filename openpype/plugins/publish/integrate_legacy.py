@@ -122,6 +122,8 @@ class IntegrateAssetNew(pyblish.api.InstancePlugin):
                 "xgen",
                 "hda",
                 "usd",
+                "reference",
+                "material",
                 "staticMesh",
                 "skeletalMesh",
                 "mvLook",

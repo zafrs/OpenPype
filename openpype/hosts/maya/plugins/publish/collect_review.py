@@ -112,7 +112,7 @@ class CollectReview(pyblish.api.InstancePlugin):
             instance.data['remove'] = True
 
         else:
-            legacy_subset_name = task + 'Review'
+            legacy_subset_name =  'review' + '_' + task
             asset_doc = instance.context.data['assetEntity']
             project_name = legacy_io.active_project()
             subset_doc = get_subset_by_name(

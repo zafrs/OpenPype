@@ -11,7 +11,7 @@ from openpype.pipeline.publish import (
 class ValidateShadingEngine(pyblish.api.InstancePlugin):
     """Validate all shading engines are named after the surface material.
 
-    Shading engines should be named "{surface_shader}SG"
+    Shading engines should be named "sg_{surface_shader}"
     """
 
     order = ValidateContentsOrder
@@ -41,10 +41,8 @@ class ValidateShadingEngine(pyblish.api.InstancePlugin):
                 shape, destination=True, type="shadingEngine"
             ) or []
             for shading_engine in shading_engines:
-                name = (
-                    cmds.listConnections(shading_engine + ".surfaceShader")[0]
-                    + "SG"
-                )
+                name = ( "sg_" +
+                    cmds.listConnections(shading_engine + ".surfaceShader")[0] )
                 if shading_engine != name:
                     invalid.append(shading_engine)
 
@@ -54,8 +52,6 @@ class ValidateShadingEngine(pyblish.api.InstancePlugin):
     def repair(cls, instance):
         shading_engines = cls.get_invalid(instance)
         for shading_engine in shading_engines:
-            name = (
-                cmds.listConnections(shading_engine + ".surfaceShader")[0]
-                + "SG"
-            )
+            name = ( "sg_" +
+                cmds.listConnections(shading_engine + ".surfaceShader")[0] )
             cmds.rename(shading_engine, name)

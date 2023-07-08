@@ -22,7 +22,12 @@ from . import avalon_sync
 from . import credentials
 from .ftrack_base_handler import BaseHandler
 from .ftrack_event_handler import BaseEvent
-from .ftrack_action_handler import BaseAction, ServerAction, statics_icon
+from .ftrack_action_handler import (
+    BaseAction, 
+    ServerAction, 
+    statics_icon, 
+    statics_icon_lumine
+)
 
 
 __all__ = (
@@ -52,5 +57,6 @@ __all__ = (
 
     "BaseAction",
     "ServerAction",
-    "statics_icon"
+    "statics_icon",
+    "statics_icon_lumine"
 )

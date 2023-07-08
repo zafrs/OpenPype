@@ -12,7 +12,7 @@ class CreateShotClip(phiero.Creator):
     label = "Create Publishable Clip"
     family = "clip"
     icon = "film"
-    defaults = ["Main"]
+    defaults = ["main"]
 
     gui_tracks = [track.name()
                   for track in phiero.get_current_sequence().videoTracks()]
@@ -134,7 +134,7 @@ class CreateShotClip(phiero.Creator):
             "order": 3,
             "value": {
                 "subsetName": {
-                    "value": ["<track_name>", "main", "bg", "fg", "bg",
+                    "value": ["<track_name>", "main", "ic", "im", "imm", "in",
                               "animatic"],
                     "type": "QComboBox",
                     "label": "Subset Name",
@@ -142,7 +142,7 @@ class CreateShotClip(phiero.Creator):
                     "toolTip": "chose subset name pattern, if <track_name> is selected, name of track layer will be used",  # noqa
                     "order": 0},
                 "subsetFamily": {
-                    "value": ["plate", "take"],
+                    "value": ["plate", "render", "take"],
                     "type": "QComboBox",
                     "label": "Subset Family",
                     "target": "ui", "toolTip": "What use of this subset is for",  # noqa
@@ -162,7 +162,7 @@ class CreateShotClip(phiero.Creator):
                     "toolTip": "Process subsets with corresponding audio",  # noqa
                     "order": 3},
                 "sourceResolution": {
-                    "value": False,
+                    "value": True,
                     "type": "QCheckBox",
                     "label": "Source resolution",
                     "target": "tag",

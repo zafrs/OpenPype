@@ -139,6 +139,7 @@ class ExtractThumbnail(publish.Extractor):
             # playblast and viewer
             preset["viewer"] = False
 
+            panel = None
             # Update preset with current panel setting
             # if override_viewport_options is turned off
             panel = cmds.getPanel(withFocus=True) or ""
@@ -155,6 +156,9 @@ class ExtractThumbnail(publish.Extractor):
                 )
 
             path = capture.capture(**preset)
+            if panel :
+                cmds.setFocus( panel )
+            
             playblast = self._fix_playblast_output_path(path)
 
         _, thumbnail = os.path.split(playblast)

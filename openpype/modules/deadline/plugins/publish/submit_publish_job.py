@@ -300,8 +300,7 @@ class ProcessSubmittedJobOnFarm(pyblish.api.InstancePlugin,
                 "Name": job_name,
                 "UserName": job["Props"]["User"],
                 "Comment": instance.context.data.get("comment", ""),
-
-                "Department": self.deadline_department,
+                "Department": environment["AVALON_TASK"],
                 "ChunkSize": self.deadline_chunk_size,
                 "Priority": priority,
 

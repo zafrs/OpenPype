@@ -809,7 +809,12 @@ class PublishClip:
             self.subset_name = self.track_name
 
         # create subset for publishing
-        self.subset = self.subset_family + self.subset_name.capitalize()
+        # self.subset = self.subset_family + self.subset_name.capitalize()
+        if self.subset_family == "plate" :
+            self.subset = self.subset_name + '_' + self.subset_family
+        else :
+            self.subset = self.subset_family + '_' + self.subset_name
+
 
     def _replace_hash_to_expression(self, name, text):
         """ Replace hash with number in correct padding. """
