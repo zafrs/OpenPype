@@ -807,7 +807,7 @@ class VersionTextEdit(QtWidgets.QTextEdit):
 
 class ThumbnailWidget(QtWidgets.QLabel):
     aspect_ratio = (16, 9)
-    max_width = 300
+    max_width = 400
 
     def __init__(self, dbcon, parent=None):
         super(ThumbnailWidget, self).__init__(parent)

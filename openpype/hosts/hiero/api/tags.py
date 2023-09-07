@@ -129,6 +129,17 @@ def add_tags_to_workfile():
             done_tag.setName(str(name))
             log.debug("__ updating tag: {}".format(done_tag))
 
+    def get_icon_path_from_acacia(task_name):
+        acacia = os.getenv("ACACIA")
+        if acacia:
+            tag_icon = os.path.join(
+                acacia,
+                "resources/Images/Hiero/icons/tasks/{}.png".format(task_name))
+            if os.path.isfile(tag_icon):
+                return tag_icon
+            else:
+                return "icons:TagGood.png"
+
     # get project and root bin object
     project = get_current_project()
     root_bin = project.tagsBin()
@@ -151,7 +162,7 @@ def add_tags_to_workfile():
         nks_pres_tags["[Tasks]"][task_type.lower()] = {
             "editable": "1",
             "note": task_type,
-            "icon": "icons:TagGood.png",
+            "icon": get_icon_path_from_acacia(task_type),
             "metadata": {
                 "family": "task",
                 "type": task_type

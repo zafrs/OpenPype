@@ -217,7 +217,7 @@ class LoadClip(phiero.SequenceLoader):
         )
         clip = track_item.source()
         # set clip colour
-        if version_doc["_id"] == last_version_doc["_id"]:
-            clip.binItem().setColor(cls.clip_color_last)
-        else:
-            clip.binItem().setColor(cls.clip_color)
+        # if version_doc["_id"] == last_version_doc["_id"]:
+        #     clip.binItem().setColor(cls.clip_color_last)
+        # else:
+        #     clip.binItem().setColor(cls.clip_color)

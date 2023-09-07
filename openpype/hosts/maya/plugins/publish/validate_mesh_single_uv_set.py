@@ -61,7 +61,8 @@ class ValidateMeshSingleUVSet(pyblish.api.InstancePlugin,
             # Maya 2017 and up allows multiple UV sets in Alembic exports
             # so we allow it, yet just warn the user to ensure they know about
             # the other UV sets.
-            allowed = int(cmds.about(version=True)) >= 2017
+            # allowed = int(cmds.about(version=True)) >= 2017
+            allowed = None
 
             if allowed:
                 self.log.warning(message)

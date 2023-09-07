@@ -25,9 +25,22 @@ JSON_PREFIX = "JSON:::"
 def get_asset_fps(asset_doc=None):
     """Return current asset fps."""
 
+
     if asset_doc is None:
         asset_doc = get_current_project_asset(fields=["data.fps"])
-    return asset_doc["data"]["fps"]
+
+    current_fps = asset_doc["data"]["fps"]
+
+    fps = {23.98: '23.976',
+           23.976: '23.976',
+           29.97: '29.97',
+           47.952: '47.952',
+           47.95: '47.952',
+           59.94: '59.94',
+           }.get(round(float(current_fps),3), current_fps)
+
+
+    return float(fps)
 
 
 def set_id(node, unique_id, overwrite=False):

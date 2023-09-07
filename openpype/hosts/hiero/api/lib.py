@@ -629,9 +629,6 @@ def sync_avalon_data_to_workfile():
     anatomy = Anatomy(project_name)
     work_template = anatomy.templates["work"]["path"]
     work_root = anatomy.root_value_for_template(work_template)
-    active_project_root = (
-        os.path.join(work_root, project_name)
-    ).replace("\\", "/")
     # getting project
     project = get_current_project()
 
@@ -640,6 +637,15 @@ def sync_avalon_data_to_workfile():
 
     log.debug("Synchronizing Pype metadata to project: {}".format(
         project.name()))
+
+    # get project data from avalon db
+    project_doc = legacy_io.find_one({"type": "project"})
+    project_data = project_doc["data"]
+    project_code = project_doc["data"].get("code")
+
+    active_project_root = (
+        os.path.join(work_root, project_code)
+    ).replace("\\", "/")
 
     # set project root with backward compatibility
     try:
@@ -1264,11 +1270,11 @@ def check_inventory_versions(track_items=None):
 
     project_name = get_current_project_name()
     filter_result = filter_containers(containers, project_name)
-    for container in filter_result.latest:
-        set_track_color(container["_item"], clip_color_last)
+    # for container in filter_result.latest:
+    #     set_track_color(container["_item"], clip_color_last)
 
-    for container in filter_result.outdated:
-        set_track_color(container["_item"], clip_color)
+    # for container in filter_result.outdated:
+    #     set_track_color(container["_item"], clip_color)
 
 
 def selection_changed_timeline(event):

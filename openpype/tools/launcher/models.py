@@ -1,3 +1,4 @@
+import os
 import re
 import uuid
 import copy
@@ -848,6 +849,10 @@ class LauncherAssetsModel(AssetModel):
 class ProjectModel(QtGui.QStandardItemModel):
     """List of projects"""
 
+    ACACIA = os.getenv( "ACACIA" )
+    PROJECT_ICON = "/Resources/Images/Projects/icons/{}.png"
+    ICON_PATH = ACACIA + PROJECT_ICON
+
     def __init__(self, launcher_model, parent=None):
         super(ProjectModel, self).__init__(parent=parent)
 
@@ -899,7 +904,17 @@ class ProjectModel(QtGui.QStandardItemModel):
                 project_doc = self._launcher_model.get_project_doc(
                     project_name
                 )
-                icon = get_project_icon(project_doc)
+
+                icon_name = self.ICON_PATH.format( project_name )
+                icon = QtGui.QIcon( icon_name )
+
+                if not os.path.exists( icon_name ) :
+                    icon_name = self.ICON_PATH.format( "lumine" )
+                    icon = QtGui.QIcon( icon_name )
+
+                if not os.path.exists( icon_name ) :
+                    icon = get_project_icon(project_doc)
+                
                 item = QtGui.QStandardItem(icon, project_name)
                 items.append(item)
 
