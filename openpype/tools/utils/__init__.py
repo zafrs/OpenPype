@@ -20,7 +20,10 @@ from .widgets import (
     RefreshButton,
     GoToCurrentButton,
 )
-from .views import DeselectableTreeView
+from .views import (
+    DeselectableTreeView,
+    TreeView,
+)
 from .error_dialog import ErrorMessageBox
 from .lib import (
     WrappedCallbackItem,
@@ -29,6 +32,7 @@ from .lib import (
     set_style_property,
     DynamicQThread,
     qt_app_context,
+    get_qt_app,
     get_openpype_qt_app,
     get_asset_icon,
     get_asset_icon_by_name,
@@ -71,6 +75,7 @@ __all__ = (
     "GoToCurrentButton",
 
     "DeselectableTreeView",
+    "TreeView",
 
     "ErrorMessageBox",
 

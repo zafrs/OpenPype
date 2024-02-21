@@ -63,7 +63,7 @@ class Delivery(BaseAction):
             return {
                 "success": False,
                 "message": (
-                    "Didn't found project \"{}\" in avalon."
+                    "Didn't find project \"{}\" in avalon."
                 ).format(project_name)
             }
 
@@ -569,8 +569,8 @@ class Delivery(BaseAction):
 
             #===================================================================
             # fill custom deliveryName to Client purpose
-            try : 
-                anatomy_data = self.fill_custom_attributes( 
+            try :
+                anatomy_data = self.fill_custom_attributes(
                         session, anatomy_data
                     )
             except :
@@ -651,7 +651,7 @@ class Delivery(BaseAction):
             "title": "Delivery report",
             "success": False
         }
-        
+
     def fill_custom_attributes( self, session, anatomy_data ):
         asset = anatomy_data['asset']
         project_name = anatomy_data['project']['name']
