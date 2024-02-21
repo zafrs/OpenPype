@@ -62,8 +62,16 @@ class ValidateMayaUnits(pyblish.api.ContextPlugin):
         asset_doc = context.data["assetEntity"]
         asset_fps = mayalib.convert_to_maya_fps(asset_doc["data"]["fps"])
 
-        self.log.info('Units (linear): {0}'.format(linearunits))
-        self.log.info('Units (angular): {0}'.format(angularunits))
+        # compare only the same number of decimal places
+        # normalize number of decimal places base on the number with
+        # less precision.
+        if asset_fps_decimal_places > fps_decimal_places:
+            asset_fps = round(asset_fps, 3)
+        elif asset_fps_decimal_places < fps_decimal_places:
+            fps = round(fps, 2)
+
+        self.log.info('Units (linear): {0}'.format(linear_units))
+        self.log.info('Units (angular): {0}'.format(angular_units))
         self.log.info('Units (time): {0} FPS'.format(fps))
 
         invalid = []
@@ -71,8 +79,8 @@ class ValidateMayaUnits(pyblish.api.ContextPlugin):
         # Check if units are correct
         if (
             self.validate_linear_units
-            and linearunits
-            and linearunits != self.linear_units
+            and linear_units
+            and linear_units != self.linear_units
         ):
             invalid.append({
                 "setting": "Linear units",
@@ -82,8 +90,8 @@ class ValidateMayaUnits(pyblish.api.ContextPlugin):
 
         if (
             self.validate_angular_units
-            and angularunits
-            and angularunits != self.angular_units
+            and angular_units
+            and angular_units != self.angular_units
         ):
             invalid.append({
                 "setting": "Angular units",
@@ -130,4 +138,5 @@ class ValidateMayaUnits(pyblish.api.ContextPlugin):
         # TODO replace query with using 'context.data["assetEntity"]'
         asset_doc = get_current_project_asset()
         asset_fps = asset_doc["data"]["fps"]
+        asset_fps = float_round(asset_fps, 2, ceil)
         mayalib.set_scene_fps(asset_fps)
