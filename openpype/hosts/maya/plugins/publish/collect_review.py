@@ -119,7 +119,7 @@ class CollectReview(pyblish.api.InstancePlugin):
             project_name = instance.context.data["projectName"]
             asset_doc = instance.context.data['assetEntity']
             task = instance.context.data["task"]
-            legacy_subset_name = task + 'Review'
+            legacy_subset_name = 'review' + '_' + task
             subset_doc = get_subset_by_name(
                 project_name,
                 legacy_subset_name,

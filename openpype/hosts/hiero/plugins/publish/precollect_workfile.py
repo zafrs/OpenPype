@@ -64,12 +64,13 @@ class PrecollectWorkfile(pyblish.api.ContextPlugin):
         }
         family = "workfile"
         instance_data = {
+            "subset": "{}_{}main".format(asset_name, family.capitalize()),
             "label": "{} - {}Main".format(
                 asset, family),
             "name": "{}_{}".format(asset_name, family),
             "asset": context.data["asset"],
             # TODO use 'get_subset_name'
-            "subset": "{}_{}Mmain".format(asset_name, family.capitalize()),
+            "subset": "{}_{}Main".format(asset_name, family.capitalize()),
             "item": project,
             "family": family,
             "families": [],
