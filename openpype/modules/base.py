@@ -1336,6 +1336,7 @@ class TrayModulesManager(ModulesManager):
         "launcher_tool",
         "avalon",
         "clockify",
+        "traypublisher",
         "standalonepublish_tool",
         "traypublish_tool",
         "log_viewer",
@@ -1633,6 +1634,7 @@ class ModuleSettingsDef(BaseModuleSettingsDef):
     Reduce conditions that must be checked and adds predefined methods for
     each case.
     """
+
     def get_defaults(self, top_key):
         """Split method into 2 methods by top key."""
         if top_key == SYSTEM_SETTINGS_KEY:

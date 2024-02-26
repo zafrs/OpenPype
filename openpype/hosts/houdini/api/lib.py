@@ -38,8 +38,6 @@ JSON_PREFIX = "JSON:::"
 
 def get_asset_fps(asset_doc=None):
     """Return current asset fps."""
-
-
     if asset_doc is None:
         asset_doc = get_current_project_asset(fields=["data.fps"])
 

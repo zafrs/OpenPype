@@ -652,6 +652,7 @@ class Delivery(BaseAction):
             "success": False
         }
 
+
     def fill_custom_attributes( self, session, anatomy_data ):
         asset = anatomy_data['asset']
         project_name = anatomy_data['project']['name']

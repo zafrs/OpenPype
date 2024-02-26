@@ -38,7 +38,7 @@ def concatenate_splitted_paths(split_paths, anatomy):
 
                 root_items = [
                     "{{root[{}]}}".format(root),
-                    "{project[name]}"
+                    "{project[code]}"
                 ]
                 root_items.extend(clean_items[1:])
                 output.append(os.path.normpath(os.path.sep.join(root_items)))
