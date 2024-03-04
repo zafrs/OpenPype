@@ -178,7 +178,7 @@ class PrecollectInstances(pyblish.api.ContextPlugin):
             })
 
     def create_shot_instance(self, context, **data):
-        subset = "shotMain"
+        subset = "shot_main"
         master_layer = data.get("heroTrack")
         hierarchy_data = data.get("hierarchyData")
         item = data.get("item")
@@ -192,7 +192,6 @@ class PrecollectInstances(pyblish.api.ContextPlugin):
 
         asset = data["asset"]
         asset_name = data["asset_name"]
-
 
         # insert family into families
         family = "shot"
@@ -258,7 +257,6 @@ class PrecollectInstances(pyblish.api.ContextPlugin):
 
         asset = data["asset"]
         asset_name = data["asset_name"]
-
 
         # insert family into families
         family = "audio"
