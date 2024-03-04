@@ -247,6 +247,9 @@ class LoadImage(load.LoaderPlugin):
         name_data = {
             "asset": repre_cont["asset"],
             "subset": repre_cont["subset"],
+            "product": {
+                "name": repre_cont["subset"]
+            },
             "representation": representation["name"],
             "ext": repre_cont["representation"],
             "id": representation["_id"],
