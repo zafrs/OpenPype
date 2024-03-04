@@ -639,7 +639,7 @@ def sync_avalon_data_to_workfile():
         project.name()))
 
     # get project data from avalon db
-    project_doc = legacy_io.find_one({"type": "project"})
+    project_doc = get_project(project_name)
     project_data = project_doc["data"]
     project_code = project_doc["data"].get("code")
 
@@ -653,10 +653,6 @@ def sync_avalon_data_to_workfile():
     except Exception:
         # old way of setting it
         project.setProjectRoot(active_project_root)
-
-    # get project data from avalon db
-    project_doc = get_project(project_name)
-    project_data = project_doc["data"]
 
     log.debug("project_data: {}".format(project_data))
 
