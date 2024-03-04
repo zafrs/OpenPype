@@ -370,7 +370,7 @@ def set_track_openpype_tag(track, data=None):
     tag_data = {
         "editable": "0",
         "note": "OpenPype data container",
-        "icon": "openpype_icon.png",
+        "icon": "pype_icon.png",
         "metadata": dict(data.items())
     }
     # get available pype tag if any
@@ -502,7 +502,7 @@ def set_trackitem_openpype_tag(track_item, data=None):
     tag_data = {
         "editable": "0",
         "note": "OpenPype data container",
-        "icon": "openpype_icon.png",
+        "icon": "pype_icon.png",
         "metadata": dict(data.items())
     }
     # get available pype tag if any
