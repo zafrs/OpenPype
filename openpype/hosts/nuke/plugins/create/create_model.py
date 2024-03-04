@@ -13,7 +13,7 @@ class CreateModel(NukeCreator):
     label = "Model (3d)"
     family = "model"
     icon = "cube"
-    default_variants = ["Main"]
+    default_variants = ["main"]
 
     # plugin attributes
     node_color = "0xff3200ff"
