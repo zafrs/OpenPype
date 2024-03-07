@@ -17,6 +17,8 @@ class CreateCamera(NukeCreator):
     family = "camera"
     icon = "camera"
 
+    default_variant = "main"
+
     # plugin attributes
     node_color = "0xff9100ff"
 

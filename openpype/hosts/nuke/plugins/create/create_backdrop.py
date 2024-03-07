@@ -16,6 +16,8 @@ class CreateBackdrop(NukeCreator):
     icon = "file-archive-o"
     maintain_selection = True
 
+    default_variant = "main"
+
     # plugin attributes
     node_color = "0xdfea5dff"
 
