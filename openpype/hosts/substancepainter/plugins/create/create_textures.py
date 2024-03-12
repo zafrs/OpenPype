@@ -27,7 +27,7 @@ class CreateTextures(Creator):
     family = "textureSet"
     icon = "picture-o"
 
-    default_variant = "Main"
+    default_variant = "main"
 
     def create(self, subset_name, instance_data, pre_create_data):
 
