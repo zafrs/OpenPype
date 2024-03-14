@@ -956,7 +956,8 @@ class ExporterReviewMov(ExporterReview):
                 ipn = get_view_process_node()
                 if ipn is not None:
                     # connect to ViewProcess node
-                    self._connect_to_above_nodes(ipn, subset, "ViewProcess...   `{}`")
+                    self._connect_to_above_nodes(
+                        ipn, subset, "ViewProcess...   `{}`")
 
             if not self.viewer_lut_raw:
                 # OCIODisplay
@@ -980,7 +981,8 @@ class ExporterReviewMov(ExporterReview):
                         view=viewer
                     )
 
-                self._connect_to_above_nodes(dag_node, subset, "OCIODisplay...   `{}`")
+                self._connect_to_above_nodes(
+                    dag_node, subset, "OCIODisplay...   `{}`")
         # Write node
         write_node = nuke.createNode("Write")
         self.log.debug("Path: {}".format(self.path))
