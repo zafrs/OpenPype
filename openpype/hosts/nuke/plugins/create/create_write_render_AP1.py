@@ -19,6 +19,7 @@ class CreateWriteRenderAP1(napi.NukeWriteCreator):
     icon = "sign-out"
 
     instance_attributes = [
+        "farm_rendering",
         "reviewable"
     ]
     default_variants = [
