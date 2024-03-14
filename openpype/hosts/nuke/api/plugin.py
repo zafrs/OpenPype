@@ -261,7 +261,7 @@ class NukeCreator(NewCreator):
     def get_creator_settings(self, project_settings, settings_key=None):
         if not settings_key:
             settings_key = self.__class__.__name__
-        return project_settings["nuke"]["create"][settings_key]
+        return project_settings["nuke"]["create"].get(settings_key)
 
 
 class NukeWriteCreator(NukeCreator):
@@ -395,16 +395,17 @@ class NukeWriteCreator(NukeCreator):
         # plugin settings
         plugin_settings = self.get_creator_settings(project_settings)
 
-        # individual attributes
-        self.instance_attributes = plugin_settings.get(
-            "instance_attributes") or self.instance_attributes
-        self.prenodes = plugin_settings["prenodes"]
-        self.default_variants = plugin_settings.get(
-            "default_variants") or self.default_variants
-        self.temp_rendering_path_template = (
-            plugin_settings.get("temp_rendering_path_template")
-            or self.temp_rendering_path_template
-        )
+        if plugin_settings:
+            # individual attributes
+            self.instance_attributes = plugin_settings.get(
+                "instance_attributes") or self.instance_attributes
+            self.prenodes = plugin_settings["prenodes"]
+            self.default_variants = plugin_settings.get(
+                "default_variants") or self.default_variants
+            self.temp_rendering_path_template = (
+                plugin_settings.get("temp_rendering_path_template")
+                or self.temp_rendering_path_template
+            )
 
 
 class OpenPypeCreator(LegacyCreator):

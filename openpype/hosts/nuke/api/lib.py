@@ -2646,7 +2646,9 @@ def get_write_node_template_attr(node):
     plugin_names_mapping = {
         "create_write_image": "CreateWriteImage",
         "create_write_prerender": "CreateWritePrerender",
-        "create_write_render": "CreateWriteRender"
+        "create_write_render": "CreateWriteRender",
+        "create_write_render_AP0": "CreateWriteRender",
+        "create_write_render_AP1": "CreateWriteRender"
     }
     # get avalon data from node
     node_data = get_node_data(node, INSTANCE_DATA_KNOB)
