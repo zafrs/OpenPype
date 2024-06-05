@@ -1,6 +1,414 @@
 # Changelog
 
 
+## [3.18.10](https://github.com/ynput/OpenPype/tree/3.18.10)
+
+
+[Full Changelog](https://github.com/ynput/OpenPype/compare/3.18.9...3.18.10)
+
+### **🆕 New features**
+
+
+<details>
+<summary>Arnold Scene Source Raw - OP-8014 <a href="https://github.com/ynput/OpenPype/pull/6182">#6182</a></summary>
+
+This PR is to try and re-instate some flexibility to the `Arnold Scene Source` family, which got restricted by https://github.com/ynput/OpenPype/pull/4449The proxy workflow introduced was actually broken due to https://github.com/ynput/OpenPype/pull/4460.We can now have any nodes directly in the instance set, which should be backwards compatible of the `Arnold Scene Source` before the overhaul in https://github.com/ynput/OpenPype/pull/4449.The `content` and `proxy` sets works as well, but not at the same time as the raw nodes directly in the instance set. There is a validator in place to prevent using a single instance for both workflows.Now the question is whether we should have this as a single family or split somehow?The workflow of having nodes directly in the instance set, compared to `content` and `proxy` set, can be documented, so I see this as most a matter of terminology.`Arnold Scene Source` makes sense to have as a family, but only if its a the raw output with little to no validation, similar to `Maya Scene`. But then I'm not sure what to call the other family that has more of a workflow in place, which is similar to `Model` and `Pointcache`.
+
+
+___
+
+</details>
+
+
+<details>
+<summary>Nuke: Push to project - AY-742 <a href="https://github.com/ynput/OpenPype/pull/6245">#6245</a></summary>
+
+This introduces the "Push to Project" menu item in Nuke.This enables users to push the current workfile to a different project and copy all files from Read nodes to a `resources` folder next to the workfile. Containers will be baked to normal Read nodes.Also gizmos will be baked to groups.
+
+
+___
+
+</details>
+
+### **🚀 Enhancements**
+
+
+<details>
+<summary>Max: Implementation of Validate Render Passes <a href="https://github.com/ynput/OpenPype/pull/6138">#6138</a></summary>
+
+This PR is to enhance the current validator of checking the render output before deadline publish. It does the following:
+- The validator `Render Output for Deadline` would be renamed as `Validate Render Passes`
+- The validator would not only check on the invalid render output folder but the invalid filename of render passes.
+
+
+___
+
+</details>
+
+
+<details>
+<summary>Max : Optional validator to check invalid context data <a href="https://github.com/ynput/OpenPype/pull/6198">#6198</a></summary>
+
+Add optional validator check on invalid context data for asset and task in 3dsMax
+
+
+___
+
+</details>
+
+### **🐛 Bug fixes**
+
+
+<details>
+<summary>Maya: Account for no Alembic overrides. <a href="https://github.com/ynput/OpenPype/pull/6267">#6267</a></summary>
+
+Fix for if no overrides are present in `project_settings/maya/publish/ExtractAlembic/overrides`
+
+
+___
+
+</details>
+
+
+
+
+## [3.18.9](https://github.com/ynput/OpenPype/tree/3.18.9)
+
+
+[Full Changelog](https://github.com/ynput/OpenPype/compare/3.18.8...3.18.9)
+
+### **🆕 New features**
+
+
+<details>
+<summary>Integration: 3DEqualizer integration <a href="https://github.com/ynput/OpenPype/pull/5868">#5868</a></summary>
+
+This PR is adding basic integration for 3DEqualizer4 from Science-D-Vision. Integration includes:
+- Workfiles
+- Loading plates (cameras)
+- Publishing scripts to Maya and Nuke
+- Publishing of lens data
+
+
+___
+
+</details>
+
+### **🚀 Enhancements**
+
+
+<details>
+<summary>Maya: abc options for Pointcache/Animation family - OP-5920 <a href="https://github.com/ynput/OpenPype/pull/5173">#5173</a></summary>
+
+Add all options for alembic extraction on `pointcache` and `animation` families.
+
+
+___
+
+</details>
+
+
+<details>
+<summary>RoyalRender: environment injection on the server <a href="https://github.com/ynput/OpenPype/pull/6160">#6160</a></summary>
+
+Previously env vars were injected directly on the client during submission. That could have issues when environment on client machines is different than on workers.This PR tries similar approach as on DL when before job is rendered it queries Ayon to get environment variables for context.These variables are used to create `.rrEnv` file  and attach it to the job. That should provide rendering environment controlled by Ayon.
+
+
+___
+
+</details>
+
+
+<details>
+<summary>Hiero: colorspace settings aligned with nuke - AY-978 <a href="https://github.com/ynput/OpenPype/pull/6249">#6249</a></summary>
+
+In order to share the same colorspaces in the workfile in Hiero and Nuke, we need to bring back the workfile settings for colorspaces in Nuke.In Hiero we also need code to edit the project settings in memory and apply the colorspaces when launching Hiero so any new project gets the correct colorspaces. Due to Foundry not providing Python API methods for setting the project colorspaces, we need to go through the UI widgets to set them, when dealing with in-memory projects.Also small bugfix when saving the workfile without any sequences.
+
+
+___
+
+</details>
+
+### **🐛 Bug fixes**
+
+
+<details>
+<summary>Maya: Make sure validators being shown in the Publisher UI when they set to be optional in AYON setting   <a href="https://github.com/ynput/OpenPype/pull/6257">#6257</a></summary>
+
+This PR is to make sure validators being shown correctly in the Publisher UI when they are being set to be optional in AYON setting.Ported from https://github.com/ynput/ayon-core/pull/201
+
+
+___
+
+</details>
+
+
+<details>
+<summary>Maya: Fix Redshift cryptomatte multipartEXR <a href="https://github.com/ynput/OpenPype/pull/6240">#6240</a></summary>
+
+When using Redshift and rendering multipart EXRs, the instances for cryptomatte AOVs are getting falsely marked as multipart EXR even though they are being forced to be separate files by Redshift.Since we cannot query the AOVs multipart individually, we'll need a hardcoded rule.Ideally I guess AOVs should be separate instances in the publishing process but that is too big of a scope atm.
+
+
+___
+
+</details>
+
+
+<details>
+<summary>Substance Painter: Allow users to set texture resolutions when loading mesh to create project <a href="https://github.com/ynput/OpenPype/pull/6262">#6262</a></summary>
+
+This PR is to add the support of template settings in the mesh loaders for Substance project creation. User can customize and add template settings in AYON settings and apply it through the option mode(the button with memo icon).
+
+
+___
+
+</details>
+
+
+<details>
+<summary>Deadline: Submit Publish job error <a href="https://github.com/ynput/OpenPype/pull/6263">#6263</a></summary>
+
+Use get env to get the value of `AVALON_DB``AVALON_DB` environment variable is not initialized when using OpenPype in Ayon mode. which raise an error when using `os.environ["AVALON_DB"]`This PR changes it to `os.getenv("AVALON_DB")`
+
+
+___
+
+</details>
+
+
+<details>
+<summary>Fix: Removed double conversion of limit_groups <a href="https://github.com/ynput/OpenPype/pull/6265">#6265</a></summary>
+
+`limit_groups` settings got transformed twice. Kept nicer looking conversion.
+
+
+___
+
+</details>
+
+
+
+
+## [3.18.8](https://github.com/ynput/OpenPype/tree/3.18.8)
+
+
+[Full Changelog](https://github.com/ynput/OpenPype/compare/3.18.7...3.18.8)
+
+### **🚀 Enhancements**
+
+
+<details>
+<summary>Max: Implementation of Camera Attributes Validator <a href="https://github.com/ynput/OpenPype/pull/6110">#6110</a></summary>
+
+Implement Validate Camera Attributes in camera family in Max host
+
+
+___
+
+</details>
+
+
+<details>
+<summary>Max: Add missing workfile creator <a href="https://github.com/ynput/OpenPype/pull/6203">#6203</a></summary>
+
+Add the missing workfile creator in 3dsMax.
+
+
+___
+
+</details>
+
+
+<details>
+<summary>Deadline: Expose families transfer setting - OP-8268 <a href="https://github.com/ynput/OpenPype/pull/6217">#6217</a></summary>
+
+This PR exposes the `families_transfer` attribute on the `ProcessSubmittedJobOnFarm` plugin.The use case is to remove `ftrack` from the list if a studio does not want all render passes from Maya to become asset versions in Ftrack.
+
+
+___
+
+</details>
+
+### **🐛 Bug fixes**
+
+
+<details>
+<summary>Deadline: Add AVALON_DB to Deadline submissions - OP-8270 <a href="https://github.com/ynput/OpenPype/pull/6218">#6218</a></summary>
+
+Because testing uses a different database name https://github.com/ynput/OpenPype/blob/develop/tests/lib/testing_classes.py#L46 we need to add `AVALON_DB` to the environment for Deadline submissions.
+
+
+___
+
+</details>
+
+
+<details>
+<summary>Houdini: fix default render product name in Vray <a href="https://github.com/ynput/OpenPype/pull/6083">#6083</a></summary>
+
+This is fixing key name for default render products in VRay. Original name `RGB Color` caused issues during job submission.
+
+
+___
+
+</details>
+
+
+<details>
+<summary>Resolve Clip Load - Slate support <a href="https://github.com/ynput/OpenPype/pull/6126">#6126</a></summary>
+
+Loaded clip should ignore the slate, and be trimmed the same regardless of slate presence.closes: https://github.com/ynput/OpenPype/issues/6124#AY-1684
+
+
+___
+
+</details>
+
+
+<details>
+<summary>Use duration from streams as its more precise <a href="https://github.com/ynput/OpenPype/pull/6171">#6171</a></summary>
+
+When dealing with 30 fps mov of 2 frames, the duration was reduce to 3 decimal places (0.067) which meant that the flag for ffmpeg `-ss` ended up with a time that was not precise enough for ffmpeg to pick a frame; `0.0335`. Should be `0.0333`.Using the duration from the streams is more precise; `0.066667`.
+
+
+___
+
+</details>
+
+
+<details>
+<summary>Core: Headless publish failing without GL lib <a href="https://github.com/ynput/OpenPype/pull/6205">#6205</a></summary>
+
+Trying to run a headless publish in the farm I hit another blocker:
+```
+2024-02-07 20:42:45:  0: STDOUT: !!! AYON crashed:
+2024-02-07 20:42:45:  0: STDOUT: Traceback (most recent call last):
+2024-02-07 20:42:45:  0: STDOUT:   File "start.py", line 740, in main_cli
+2024-02-07 20:42:45:  0: STDOUT:     ))
+2024-02-07 20:42:45:  0: STDOUT:   File "/usr/ayon-launcher/1.0.0+ax/dependencies/click/core.py", line 1157, in __call__
+2024-02-07 20:42:45:  0: STDOUT:     return self.main(*args, **kwargs)
+2024-02-07 20:42:45:  0: STDOUT:   File "/usr/ayon-launcher/1.0.0+ax/dependencies/click/core.py", line 1078, in main
+2024-02-07 20:42:45:  0: STDOUT:     rv = self.invoke(ctx)
+2024-02-07 20:42:45:  0: STDOUT:   File "/usr/ayon-launcher/1.0.0+ax/dependencies/click/core.py", line 1688, in invoke
+2024-02-07 20:42:45:  0: STDOUT:     return _process_result(sub_ctx.command.invoke(sub_ctx))
+2024-02-07 20:42:45:  0: STDOUT:   File "/usr/ayon-launcher/1.0.0+ax/dependencies/click/core.py", line 1434, in invoke
+2024-02-07 20:42:45:  0: STDOUT:     return ctx.invoke(self.callback, **ctx.params)
+2024-02-07 20:42:45:  0: STDOUT:   File "/usr/ayon-launcher/1.0.0+ax/dependencies/click/core.py", line 783, in invoke
+2024-02-07 20:42:45:  0: STDOUT:     return __callback(*args, **kwargs)
+2024-02-07 20:42:45:  0: STDOUT:   File "/pipe/dev/farrizabalaga/OpenPype/openpype/cli.py", line 197, in publish
+2024-02-07 20:42:45:  0: STDOUT:     PypeCommands.publish(list(paths), targets, gui)
+2024-02-07 20:42:45:  0: STDOUT:   File "/pipe/dev/farrizabalaga/OpenPype/openpype/pype_commands.py", line 100, in publish
+2024-02-07 20:42:45:  0: STDOUT:     from openpype.tools.utils.host_tools import show_publish
+2024-02-07 20:42:45:  0: STDOUT:   File "/pipe/dev/farrizabalaga/OpenPype/openpype/tools/utils/__init__.py", line 1, in <module>
+2024-02-07 20:42:45:  0: STDOUT:     from .layouts import FlowLayout
+2024-02-07 20:42:45:  0: STDOUT:   File "/pipe/dev/farrizabalaga/OpenPype/openpype/tools/utils/layouts.py", line 1, in <module>
+2024-02-07 20:42:45:  0: STDOUT:     from qtpy import QtWidgets, QtCore
+2024-02-07 20:42:45:  0: STDOUT:   File "/usr/ayon-launcher/1.0.0+ax/dependencies/qtpy/QtWidgets.py", line 111, in <module>
+2024-02-07 20:42:45:  0: STDOUT:     from PySide2.QtWidgets import *
+2024-02-07 20:42:45:  0: STDOUT:   File "/usr/ayon-launcher/1.0.0+ax/vendor/python/shiboken2/files.dir/shibokensupport/__feature__.py", line 142, in _import
+2024-02-07 20:42:45:  0: STDOUT:     return original_import(name, *args, **kwargs)
+2024-02-07 20:42:45:  0: STDOUT: ImportError: libGL.so.1: cannot open shared object file: No such file or directory
+```
+The imports of `openpype.tools.utils.host_tools.__init__.py` were throwing an error due to trying to import QtWidgets unnecessarily.
+
+
+___
+
+</details>
+
+
+<details>
+<summary>Nuke: LoadClip colorspace override - OP-6591 <a href="https://github.com/ynput/OpenPype/pull/6215">#6215</a></summary>
+
+Setting the colorspace from the representation data was not supported.
+
+
+___
+
+</details>
+
+
+<details>
+<summary>Hiero: Add OP settings and convert in plugin - OP-8338 <a href="https://github.com/ynput/OpenPype/pull/6232">#6232</a></summary>
+
+Missing settings for https://github.com/ynput/OpenPype/pull/6143.
+
+
+___
+
+</details>
+
+
+<details>
+<summary>Unreal: Fix Render Instance Collector to use folderPath <a href="https://github.com/ynput/OpenPype/pull/6233">#6233</a></summary>
+
+Fix Render Instance Collector to use folderPath instead of just the asset name.
+
+
+___
+
+</details>
+
+
+<details>
+<summary>Bugfix - Fix "Action Failed" window not showing <a href="https://github.com/ynput/OpenPype/pull/6236">#6236</a></summary>
+
+This PR targets to fix issue #6234.
+
+
+___
+
+</details>
+
+
+<details>
+<summary>Nuke: render use existing frames with slate offsets the published render - AY-1433 <a href="https://github.com/ynput/OpenPype/pull/6239">#6239</a></summary>
+
+Due to `frameStart` data member on representation for existing frames, the frame indexes would be re-numbered when integrating due to this; https://github.com/ynput/OpenPype/blob/develop/openpype/plugins/publish/integrate.py#L712-L726Removing `frameStart` had no effect on publishing workflows, local or farm.Also fixed an issues with slate collection which could misbehave if the instance node had "slate" in the name.Resolves #5883
+
+
+___
+
+</details>
+
+
+<details>
+<summary>AYON Workfiles tool: Copy and open of published workfile works <a href="https://github.com/ynput/OpenPype/pull/6241">#6241</a></summary>
+
+Fix copy and open published workfiles.
+
+
+___
+
+</details>
+
+
+<details>
+<summary>Chore: OCIO and python2 compatibility fixes <a href="https://github.com/ynput/OpenPype/pull/6242">#6242</a></summary>
+
+Nuke 12 is now fully supported with our OCIO wrapping functionalities.
+
+
+___
+
+</details>
+
+### **Merged pull requests**
+
+
+<details>
+<summary>Tests: Fix failing maya automatic test <a href="https://github.com/ynput/OpenPype/pull/6235">#6235</a></summary>
+
+Improvement on https://github.com/ynput/OpenPype/pull/6231
+
+
+___
+
+</details>
+
+
+
+
 ## [3.18.7](https://github.com/ynput/OpenPype/tree/3.18.7)
 
 
